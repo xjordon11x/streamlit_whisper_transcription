@@ -26,7 +26,7 @@ st.title("Whisper Transcription")
 tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
 
 with tab1:
-    audio_bytes = audio_recorder(pause_threshold=180.0, sample_rate=41_000
+    audio_bytes = audio_recorder(pause_threshold=180.0, sample_rate=41_000)
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
