@@ -9,13 +9,13 @@ from whisper_API import transcribe
 working_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(working_dir)
 
-# Request the user's OpenAI API key in the left column
-openai.api_key = st.sidebar.text_input("Ingrese su clave de la API de OpenAI", type="password")
+api_key = st.sidebar.text_input("Ingrese su clave de la API de OpenAI", type="password")
 
 if not api_key:
     st.warning("Por favor ingrese una clave de API válida para continuar.")
 else:
     openai.api_key = api_key
+    # Continuar con el resto del código que utiliza la clave de API
 
 st.title("Piense en voz alta")
 
