@@ -21,7 +21,7 @@ st.sidebar.markdown("""
 2. Para iniciar o detener la grabación, haga clic en el icono .
 3. Espere a que cargue el archivo o a que se procese la grabación.
 4. Transcriba.
-Por Moris Polanco, a partir de leopoldpoldus.
+- Por Moris Polanco, a partir de leopoldpoldus.
 """)
 
 # tab record audio and upload audio
