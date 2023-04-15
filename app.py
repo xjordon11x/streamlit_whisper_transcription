@@ -14,9 +14,9 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 st.title("Piense en voz alta")
 
-# Add instructions to left column
+# Añadir título e instrucciones en la columna izquierda
 left_column.title("Instrucciones")
-st.sidebar.markdown("""
+left_column.markdown("""
 1. Suba un archivo de audio (wav o mp3) o grabe hasta 3 minutos. 
 2. Para iniciar o detener la grabación, haga clic en el icono .
 3. Espere a que cargue el archivo o a que se procese la grabación.
