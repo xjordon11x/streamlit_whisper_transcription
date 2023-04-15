@@ -10,15 +10,26 @@ import streamlit as st
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-
 def transcribe(audio_file):
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     return transcript
 
+def clean_transcription(transcription):
+    prompt = "Eres un secretario. Tu función es pasar en limpio las notas transcritas. El texto resultante debe ordenar ideas y ampliar o reducir cuando sea necesario. El hecho es que el usuario debe poder decir al leer las notas que tú elaboras: 'Justamente, esto es lo que quería decir'"
 
-from audio_recorder_streamlit import audio_recorder
-from whisper_API import transcribe
+    model_engine = "text-davinci-003"
+    max_tokens = 1024
+    temperature = 0.7
 
+    response = openai.Completion.create(
+        engine=model_engine,
+        prompt=prompt + "\n" + transcription,
+        max_tokens=max_tokens,
+        temperature=temperature
+    )
+
+    clean_text = response.choices[0].text
+    return clean_text
 
 st.title("Whisper Transcription")
 
@@ -58,12 +69,36 @@ if st.button("Transcribe"):
     transcript = transcribe(audio_file)
     text = transcript["text"]
 
+    # clean and order transcript
+    cleaned_text = clean_transcription(text)
+
     st.header("Transcript")
-    st.write(text)
+    st.write(cleaned_text)
 
     # save transcript to text file
     with open("transcript.txt", "w") as f:
-        f.write(text)
+        f.write(cleaned_text)
 
     # download transcript
-    st.download_button('Download Transcript', text)
+    st.download_button('Download Transcript', cleaned_text)
+def clean_transcription(transcription):
+    prompt = (f"Eres un secretario. Tu función es pasar en limpio las notas transcritas. El texto resultante debe "
+              f"ordenar ideas y ampliar o reducir cuando sea necesario. El hecho es que el usuario debe poder decir "
+              f"al leer las notas que tú elaboras: 'justamente, esto es lo que quería decir'.\n\n"
+              f"Transcripción:\n{transcription}\n\nTexto final:")
+
+    # Limpiar y ordenar transcripción con OpenAI
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        temperature=0.7,
+    )
+
+    # Obtener el texto final
+    text = response.choices[0].text
+
+    # Eliminar el prompt y devolver el texto final
+    return text.split("Texto final:")[1].strip()
