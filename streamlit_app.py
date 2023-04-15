@@ -70,7 +70,7 @@ if st.button("Transcriba"):
             f.write(text)
 
         # download transcript
-        st.download_button('Download Transcript', text)
+        st.download_button('Descargue la transcripción', text)
 
 
 
@@ -119,4 +119,4 @@ def clean_transcription(transcription):
         f.write(cleaned_text)
 
     # download transcript
-    st.download_button('Download Transcript', cleaned_text) 
+    st.download_button('Descargue la transcripción', cleaned_text) 
