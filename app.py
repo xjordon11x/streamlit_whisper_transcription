@@ -102,3 +102,29 @@ def clean_transcription(transcription):
 
     # Eliminar el prompt y devolver el texto final
     return text.split("Texto final:")[1].strip()
+if st.button("Transcribe"):
+    # find newest audio file
+    audio_file_path = max(
+        [f for f in os.listdir(".") if f.startswith("audio")],
+        key=os.path.getctime,
+    )
+
+    # transcribe
+    audio_file = open(audio_file_path, "rb")
+
+    # Obtener la transcripción
+    transcript = transcribe(audio_file)
+    text = transcript["text"]
+
+    # Limpiar y ordenar la transcripción
+    cleaned_text = clean_transcription(text)
+
+    st.header("Transcript")
+    st.write(cleaned_text)
+
+    # save transcript to text file
+    with open("transcript.txt", "w") as f:
+        f.write(cleaned_text)
+
+    # download transcript
+    st.download_button('Download Transcript', cleaned_text)
