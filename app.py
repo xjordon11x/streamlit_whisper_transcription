@@ -14,6 +14,14 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 st.title("Whisper Transcription")
 
+# Add instructions to left column
+st.sidebar.markdown("""
+1. Suba un archivo de audio (wav o mp3) o grabe hasta 3 minutos. 
+2. Para iniciar o detener la grabación, haga clic en el icono .
+3. Espere a que cargue el archivo o a que se procese la grabación.
+4. Transcriba.
+""")
+
 # tab record audio and upload audio
 tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
 
