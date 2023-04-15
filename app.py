@@ -28,7 +28,7 @@ st.sidebar.markdown("""
 tab1, tab2 = st.tabs(["Grabe Audio", "Cargue Audio"])
 
 with tab1:
-    audio_bytes = audio_recorder()
+    audio_bytes = audio_recorder(pause_threshold=180.0)
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
