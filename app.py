@@ -50,65 +50,23 @@ if st.button("Transcribe"):
     transcript = transcribe(audio_file)
     text = transcript["text"]
 
-    st.header("Transcript")
-    st.write(text)
+    # clean and order transcript
+    cleaned_text = clean_transcription(text)
 
-    # save transcript to text file
-    with open("transcript.txt", "w") as f:
-        f.write(text)
+st.header("Transcript")
+st.write(cleaned_text)
 
-    # download transcript
-    st.download_button('Download Transcript', text)
+# save transcript to text file
+with open("transcript.txt", "w") as f:
+    f.write(cleaned_text)
 
+# download transcript
+st.download_button('Download Transcript', cleaned_text)
 
 def transcribe(audio_file):
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     return transcript
 
-def clean_transcription(transcription):
-    prompt = "Eres un secretario. Tu función es pasar en limpio las notas transcritas. El texto resultante debe ordenar ideas y ampliar o reducir cuando sea necesario. El hecho es que el usuario debe poder decir al leer las notas que tú elaboras: 'Justamente, esto es lo que quería decir'"
-
-    model_engine = "text-davinci-003"
-    max_tokens = 1024
-    temperature = 0.7
-
-    response = openai.Completion.create(
-        engine=model_engine,
-        prompt=prompt + "\n" + transcription,
-        max_tokens=max_tokens,
-        temperature=temperature
-    )
-
-    clean_text = response.choices[0].text
-    return clean_text
-
-st.title("Whisper Transcription")
-
-if st.button("Transcribe"):
-    # find newest audio file
-    audio_file_path = max(
-        [f for f in os.listdir(".") if f.startswith("audio")],
-        key=os.path.getctime,
-    )
-
-    # transcribe
-    audio_file = open(audio_file_path, "rb")
-
-    transcript = transcribe(audio_file)
-    text = transcript["text"]
-
-    # clean and order transcript
-    cleaned_text = clean_transcription(text)
-
-    st.header("Transcript")
-    st.write(cleaned_text)
-
-    # save transcript to text file
-    with open("transcript.txt", "w") as f:
-        f.write(cleaned_text)
-
-    # download transcript
-    st.download_button('Download Transcript', cleaned_text)
 def clean_transcription(transcription):
     prompt = (f"Eres un secretario. Tu función es pasar en limpio las notas transcritas. El texto resultante debe "
               f"ordenar ideas y ampliar o reducir cuando sea necesario. El hecho es que el usuario debe poder decir "
