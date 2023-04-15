@@ -2,11 +2,12 @@ import os
 import sys
 import datetime
 import openai
+import streamlit as st
+import audio_recorder
 
 working_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(working_dir)
 
-import streamlit as st
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
