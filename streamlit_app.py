@@ -111,7 +111,7 @@ def clean_transcription(transcription):
     # Limpiar y ordenar la transcripción
     cleaned_text = clean_transcription(text)
 
-    st.header("Transcript")
+    st.header("Transcripción")
     st.write(cleaned_text)
 
     # save transcript to text file
