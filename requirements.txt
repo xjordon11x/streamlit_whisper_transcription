@@ -1,6 +1,4 @@
 streamlit
 audio-recorder-streamlit
 openai
-libportaudio2
-pydub
-ffmpeg
+python-dotenv
