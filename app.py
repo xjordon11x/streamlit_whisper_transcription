@@ -10,13 +10,14 @@ sys.path.append(working_dir)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+
 st.title("Whisper Transcription")
 
 # tab record audio and upload audio
 tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
 
 with tab1:
-    audio_bytes = audio_recorder(pause_threshold=180.0)
+    audio_bytes = audio_recorder()
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -48,18 +49,27 @@ if st.button("Transcribe"):
     transcript = transcribe(audio_file)
     text = transcript["text"]
 
-    # clean and order transcript
-    cleaned_text = clean_transcription(text)
+    st.header("Transcript")
+    st.write(text)
 
-st.header("Transcript")
-st.write(cleaned_text)
+    # save transcript to text file
+    with open("transcript.txt", "w") as f:
+        f.write(text)
 
-# save transcript to text file
-with open("transcript.txt", "w") as f:
-    f.write(cleaned_text)
+    # download transcript
+    st.download_button('Download Transcript', text)
 
-# download transcript
-st.download_button('Download Transcript', cleaned_text)
+
+
+
+
+
+
+
+
+
+
+
 
 def transcribe(audio_file):
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
