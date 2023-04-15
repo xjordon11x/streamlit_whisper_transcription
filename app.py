@@ -3,7 +3,7 @@ import sys
 import datetime
 import openai
 import streamlit as st
-import audio_recorder
+import audio_recorder_streamlit
 
 working_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(working_dir)
