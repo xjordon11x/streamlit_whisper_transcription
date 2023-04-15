@@ -28,26 +28,24 @@ st.sidebar.markdown("""
 tab1, tab2 = st.tabs(["Grabe Audio", "Cargue Audio"])
 
 with tab1:
-    if st.button('Start Recording'):
-        with st.spinner('Recording...'):
-            audio_bytes = audio_recorder(pause_threshold=180.0)
-        if audio_bytes:
-            st.audio(audio_bytes, format="audio/wav")
-            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    audio_bytes = audio_recorder()
+    if audio_bytes:
+        st.audio(audio_bytes, format="audio/wav")
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-            # save audio file to mp3
-            with open(f"audio_{timestamp}.mp3", "wb") as f:
-                f.write(audio_bytes)
+        # save audio file to mp3
+        with open(f"audio_{timestamp}.mp3", "wb") as f:
+            f.write(audio_bytes)
 
 with tab2:
     audio_file = st.file_uploader("Upload Audio", type=["mp3", "mp4", "wav", "m4a"])
-    if audio_file:
-        with st.spinner('Uploading...'):
-            timestamp = timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            # save audio file with correct extension
-            with open(f"audio_{timestamp}.{audio_file.type.split('/')[1]}", "wb") as f:
-                f.write(audio_file.read())
 
+    if audio_file:
+        # st.audio(audio_file.read(), format={audio_file.type})
+        timestamp = timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        # save audio file with correct extension
+        with open(f"audio_{timestamp}.{audio_file.type.split('/')[1]}", "wb") as f:
+            f.write(audio_file.read())
 
 if st.button("Transcriba"):
     with st.spinner('Transcribiendo...'):
