@@ -12,6 +12,10 @@ sys.path.append(working_dir)
 # Request the user's OpenAI API key in the left column
 openai.api_key = st.sidebar.text_input("Ingrese su clave de la API de OpenAI", type="password")
 
+if not api_key:
+    st.warning("Por favor ingrese una clave de API válida para continuar.")
+else:
+    openai.api_key = api_key
 
 st.title("Piense en voz alta")
 
