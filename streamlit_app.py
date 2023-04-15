@@ -10,7 +10,7 @@ working_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(working_dir)
 
 # Request the user's OpenAI API key in the left column
-openai.api_key = st.sidebar.text_input("Enter your OpenAI API key:", type="password")
+openai.api_key = st.sidebar.text_input("Ingrese su clave de la API de OpenAI", type="password")
 
 
 st.title("Piense en voz alta")
