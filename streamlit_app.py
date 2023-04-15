@@ -5,24 +5,19 @@ import streamlit as st
 import openai
 from audio_recorder_streamlit import audio_recorder
 from whisper_API import transcribe
-from streamlit.secrets import set_config_file
 
-# Configuración de la API de OpenAI
-if 'openai' not in st.secrets:
-    st.error("Por favor ingrese su clave API de OpenAI")
-else:
-    openai.api_key = st.secrets["openai"]
 
 working_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(working_dir)
 
 st.title("Piense en voz alta")
 
-# Añadir título e instrucciones en la columna izquierda
-st.sidebar.subheader("Configuración")
-api_key = st.sidebar.text_input("Ingrese su clave API de OpenAI:", type="password")
-set_config_file({"openai": api_key}, "secrets.toml")
+# Agregar caja para ingresar API
+st.sidebar.subheader("Ingrese su API")
+api_key = st.sidebar.text_input("API Key", type="password")
 
+
+# Añadir título e instrucciones en la columna izquierda
 st.sidebar.title("Instrucciones")
 st.sidebar.markdown("""
 1. Suba un archivo de audio (wav o mp3) o grabe hasta 3 minutos. 
@@ -78,16 +73,6 @@ if st.button("Transcriba"):
 
         # download transcript
         st.download_button('Download Transcript', text)
-
-
-
-
-
-
-
-
-
-
 
 
 def transcribe(audio_file):
