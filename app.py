@@ -3,7 +3,6 @@ import sys
 import datetime
 import openai
 import streamlit as st
-import audio_recorder_streamlit
 from audio_recorder_streamlit import audio_recorder
 
 
