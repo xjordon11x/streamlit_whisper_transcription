@@ -127,4 +127,4 @@ if st.button("Transcribe"):
         f.write(cleaned_text)
 
     # download transcript
-    st.download_button('Download Transcript', cleaned_text)
+    st.download_button('Download Transcript', cleaned_text) 
