@@ -9,9 +9,8 @@ from whisper_API import transcribe
 working_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(working_dir)
 
-# Agregar caja para ingresar API
-st.sidebar.subheader("Ingrese su API")
-api_key = st.sidebar.text_input("API Key", type="password")
+# Request the user's OpenAI API key in the left column
+openai.api_key = left_column.text_input("Enter your OpenAI API key:", type="password")
 
 
 st.title("Piense en voz alta")
