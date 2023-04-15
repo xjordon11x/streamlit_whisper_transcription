@@ -62,7 +62,7 @@ if st.button("Transcriba"):
         transcript = transcribe(audio_file)
         text = transcript["text"]
 
-        st.header("Transcripción")
+        st.header("Lo que usted quiere decir:")
         st.write(text)
 
         # save transcript to text file
