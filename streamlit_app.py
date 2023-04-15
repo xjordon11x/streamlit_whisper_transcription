@@ -6,16 +6,15 @@ import openai
 from audio_recorder_streamlit import audio_recorder
 from whisper_API import transcribe
 
-
 working_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(working_dir)
-
-st.title("Piense en voz alta")
 
 # Agregar caja para ingresar API
 st.sidebar.subheader("Ingrese su API")
 api_key = st.sidebar.text_input("API Key", type="password")
 
+
+st.title("Piense en voz alta")
 
 # Añadir título e instrucciones en la columna izquierda
 st.sidebar.title("Instrucciones")
@@ -75,6 +74,16 @@ if st.button("Transcriba"):
         st.download_button('Download Transcript', text)
 
 
+
+
+
+
+
+
+
+
+
+
 def transcribe(audio_file):
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     return transcript
@@ -111,4 +120,4 @@ def clean_transcription(transcription):
         f.write(cleaned_text)
 
     # download transcript
-    st.download_button('Download Transcript', cleaned_text)
+    st.download_button('Download Transcript', cleaned_text) 
