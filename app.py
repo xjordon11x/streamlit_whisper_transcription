@@ -17,6 +17,7 @@ def transcribe(audio_file):
 
 
 from audio_recorder_streamlit import audio_recorder
+audio_bytes = audio_recorder(pause_threshold=60.0, sample_rate=41_000
 from whisper_API import transcribe
 
 
