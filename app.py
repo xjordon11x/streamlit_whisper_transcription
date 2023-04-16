@@ -25,11 +25,14 @@ st.sidebar.markdown("""
 - Por Moris Polanco, a partir de leopoldpoldus.
 """)
 
+
+st.title("Whisper Transcription")
+
 # tab record audio and upload audio
-tab1, tab2 = st.tabs(["Grabe Audio", "Cargue Audio"])
+tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
 
 with tab1:
-    audio_bytes = audio_recorder(pause_threshold=180.0)
+    audio_bytes = audio_recorder()
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -47,7 +50,6 @@ with tab2:
         # save audio file with correct extension
         with open(f"audio_{timestamp}.{audio_file.type.split('/')[1]}", "wb") as f:
             f.write(audio_file.read())
-
 
 if st.button("Transcribe"):
     # find newest audio file
@@ -72,6 +74,12 @@ if st.button("Transcribe"):
     # download transcript
     st.download_button('Download Transcript', text)
 
-def transcribe(audio_file):
-    transcript = openai.Audio.transcribe("whisper-1", audio_file)
-    return transcript
+
+
+
+
+
+
+
+
+
