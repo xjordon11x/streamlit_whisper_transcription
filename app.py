@@ -69,18 +69,7 @@ if st.button("Transcriba"):
             f.write(text)
 
         # download transcript
-        st.download_button('Download Transcript', text)
-
-
-
-
-
-
-
-
-
-
-
+        st.download_button('Descargue la transcripción', text)
 
 def transcribe(audio_file):
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
@@ -110,7 +99,7 @@ def clean_transcription(transcription):
     # Limpiar y ordenar la transcripción
     cleaned_text = clean_transcription(text)
 
-    st.header("Transcript")
+    st.header("Lo que usted quiere decir es:")
     st.write(cleaned_text)
 
     # save transcript to text file
@@ -118,4 +107,4 @@ def clean_transcription(transcription):
         f.write(cleaned_text)
 
     # download transcript
-    st.download_button('Download Transcript', cleaned_text) 
+    st.download_button('Descargue la transcripción', cleaned_text) 
