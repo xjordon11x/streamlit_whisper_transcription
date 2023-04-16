@@ -28,9 +28,6 @@ st.sidebar.markdown("""
 # tab record audio and upload audio
 tab1, tab2 = st.tabs(["Grabe Audio", "Cargue Audio"])
 
-# tab record audio and upload audio
-tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
-
 with tab1:
     audio_bytes = audio_recorder(pause_threshold=180.0)
     if audio_bytes:
