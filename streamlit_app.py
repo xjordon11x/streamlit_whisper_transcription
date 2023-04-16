@@ -26,7 +26,7 @@ st.sidebar.markdown("""
 2. Para iniciar o detener la grabación, haga clic en el icono .
 3. Espere a que cargue el archivo o a que se procese la grabación.
 4. Transcriba.
-5. No lee audio de iPhone.
+5. No reconoce audio de iPhone.
 - Por Moris Polanco, a partir de leopoldpoldus.
 """)
 
