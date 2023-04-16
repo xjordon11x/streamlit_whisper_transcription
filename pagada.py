@@ -49,7 +49,7 @@ with tab2:
         with open(f"audio_{timestamp}.{audio_file.type.split('/')[1]}", "wb") as f:
             f.write(audio_file.read())
 
-if st.button("Transcribe"):
+if st.button("Transcriba"):
     # find newest audio file
     audio_file_path = max(
         [f for f in os.listdir(".") if f.startswith("audio")],
@@ -62,7 +62,7 @@ if st.button("Transcribe"):
     transcript = transcribe(audio_file)
     text = transcript["text"]
 
-    st.header("Transcript")
+    st.header("Lo que usted quiere decir es:")
     st.write(text)
 
     # save transcript to text file
