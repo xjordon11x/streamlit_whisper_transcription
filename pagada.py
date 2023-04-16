@@ -98,22 +98,3 @@ def clean_transcription(transcription):
 
     # Eliminar el prompt y devolver el texto final
     return text.split("Texto final:")[1].strip()
-    # Limpiar y ordenar la transcripción
-    cleaned_text = clean_transcription(text)
-
-    st.header("Lo que usted quiere decir es:")
-    st.write(cleaned_text)
-
-    # save transcript to text file
-    with open("transcript.txt", "w") as f:
-        f.write(cleaned_text)
-
-    # download transcript
-    st.download_button('Descargue la transcripción', cleaned_text) 
-
-
-
-
-
-
-
