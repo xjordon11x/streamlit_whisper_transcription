@@ -33,24 +33,29 @@ st.sidebar.markdown("""
 tab1, tab2 = st.tabs(["Grabe Audio", "Cargue Audio"])
 
 with tab1:
-    audio_bytes = audio_recorder(pause_threshold=180.0)
-    if audio_bytes:
-        st.audio(audio_bytes, format="audio/wav")
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    with st.spinner('Cargando audio...'):
+        audio_bytes = audio_recorder(pause_threshold=180.0)
+        if audio_bytes:
+            st.audio(audio_bytes, format="audio/wav")
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        # save audio file to mp3
-        with open(f"audio_{timestamp}.mp3", "wb") as f:
-            f.write(audio_bytes)
+            # save audio file to mp3
+            with open(f"audio_{timestamp}.mp3", "wb") as f:
+                f.write(audio_bytes)
+    st.success('Audio cargado exitosamente!')
 
 with tab2:
-    audio_file = st.file_uploader("Upload Audio", type=["mp3", "mp4", "wav", "m4a"])
-
-    if audio_file:
-        # st.audio(audio_file.read(), format={audio_file.type})
-        timestamp = timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        # save audio file with correct extension
-        with open(f"audio_{timestamp}.{audio_file.type.split('/')[1]}", "wb") as f:
-            f.write(audio_file.read())
+    uploaded_file = st.file_uploader("Cargar archivo de audio", type=["mp3", "wav"])
+    if uploaded_file:
+        with st.spinner('Cargando audio...'):
+            audio_bytes = uploaded_file.read()
+            st.audio(audio_bytes, format=uploaded_file.type)
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            
+            # save audio file with correct extension
+            with open(f"audio_{timestamp}.{uploaded_file.type.split('/')[1]}", "wb") as f:
+                f.write(audio_bytes)
+        st.success('Audio cargado exitosamente!')
 
 if st.button("Transcriba"):
     with st.spinner('Transcribiendo...'):
@@ -66,7 +71,7 @@ if st.button("Transcriba"):
         transcript = transcribe(audio_file)
         text = transcript["text"]
 
-        st.header("Lo que usted quiere decir:")
+        st.header("Lo que usted quiere decir es:")
         st.write(text)
 
         # save transcript to text file
