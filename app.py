@@ -49,29 +49,28 @@ with tab2:
             f.write(audio_file.read())
 
 
-if st.button("Transcriba"):
-    with st.spinner('Transcribiendo...'):
-        # find newest audio file
-        audio_file_path = max(
-            [f for f in os.listdir(".") if f.startswith("audio")],
-            key=os.path.getctime,
-        )
+if st.button("Transcribe"):
+    # find newest audio file
+    audio_file_path = max(
+        [f for f in os.listdir(".") if f.startswith("audio")],
+        key=os.path.getctime,
+    )
 
-        # transcribe
-        audio_file = open(audio_file_path, "rb")
+    # transcribe
+    audio_file = open(audio_file_path, "rb")
 
-        transcript = transcribe(audio_file)
-        text = transcript["text"]
+    transcript = transcribe(audio_file)
+    text = transcript["text"]
 
-        st.header("Lo que usted quiere decir es:")
-        st.write(text)
+    st.header("Transcript")
+    st.write(text)
 
-        # save transcript to text file
-        with open("transcript.txt", "w") as f:
-            f.write(text)
+    # save transcript to text file
+    with open("transcript.txt", "w") as f:
+        f.write(text)
 
-        # download transcript
-        st.download_button('Descargue la transcripción', text)
+    # download transcript
+    st.download_button('Download Transcript', text)
 
 def transcribe(audio_file):
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
