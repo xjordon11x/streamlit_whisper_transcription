@@ -30,7 +30,7 @@ st.sidebar.markdown("""
 tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
 
 with tab1:
-    audio_bytes = audio_recorder()
+    audio_bytes = audio_recorder(pause_threshold=180.0)
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -101,7 +101,7 @@ def clean_transcription(transcription):
     # Limpiar y ordenar la transcripción
     cleaned_text = clean_transcription(text)
 
-    st.header("Transcripción")
+    st.header("Lo que usted quiere decir es:")
     st.write(cleaned_text)
 
     # save transcript to text file
