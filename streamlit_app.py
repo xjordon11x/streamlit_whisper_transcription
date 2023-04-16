@@ -32,11 +32,14 @@ st.sidebar.markdown("""
 """)
 
 
+
+st.title("Whisper Transcription")
+
 # tab record audio and upload audio
 tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
 
 with tab1:
-    audio_bytes = audio_recorder(pause_threshold=180.0)
+    audio_bytes = audio_recorder()
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -55,7 +58,7 @@ with tab2:
         with open(f"audio_{timestamp}.{audio_file.type.split('/')[1]}", "wb") as f:
             f.write(audio_file.read())
 
-if st.button("Transcriba"):
+if st.button("Transcribe"):
     # find newest audio file
     audio_file_path = max(
         [f for f in os.listdir(".") if f.startswith("audio")],
@@ -68,7 +71,7 @@ if st.button("Transcriba"):
     transcript = transcribe(audio_file)
     text = transcript["text"]
 
-    st.header("Lo que usted quiere decir es:")
+    st.header("Transcript")
     st.write(text)
 
     # save transcript to text file
@@ -76,8 +79,7 @@ if st.button("Transcriba"):
         f.write(text)
 
     # download transcript
-    st.download_button('Descarge la transcripción', text)
-
+    st.download_button('Download Transcript', text)
 
 
 
