@@ -26,6 +26,7 @@ st.sidebar.markdown("""
 2. Para iniciar o detener la grabación, haga clic en el icono .
 3. Espere a que cargue el archivo o a que se procese la grabación.
 4. Transcriba.
+5. No lee audio de iPhone.
 - Por Moris Polanco, a partir de leopoldpoldus.
 """)
 
@@ -80,17 +81,6 @@ if st.button("Transcriba"):
 
         # download transcript
         st.download_button('Descargue la transcripción', text)
-
-
-
-
-
-
-
-
-
-
-
 
 def transcribe(audio_file):
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
