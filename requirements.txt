@@ -2,5 +2,3 @@ streamlit
 audio-recorder-streamlit
 openai
 nltk
-spacy
-punkt
