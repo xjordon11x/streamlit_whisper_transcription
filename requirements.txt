@@ -3,3 +3,4 @@ audio-recorder-streamlit
 openai
 nltk
 whisper_API
+os
