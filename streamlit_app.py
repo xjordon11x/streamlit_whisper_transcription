@@ -26,13 +26,15 @@ st.sidebar.markdown("""
 - Por Moris Polanco, a partir de leopoldpoldus.
 """)
 
-# tab grabar audio y cargar audio
+
+
+st.title("Transcripción de Whisper")
+
+# pestañas para grabar o cargar el audio
 tab1, tab2 = st.tabs(["Grabar Audio", "Cargar Audio"])
 
 with tab1:
-    # Utilizar el paquete 'audio_recorder_streamlit' para grabar audio
-    from audio_recorder_streamlit import audio_recorder
-    audio_bytes = audio_recorder(pause_threshold=180.0)
+    audio_bytes = audio_recorder()
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -42,7 +44,6 @@ with tab1:
             f.write(audio_bytes)
 
 with tab2:
-    # Utilizar el método 'file_uploader' de Streamlit para cargar un archivo de audio
     audio_file = st.file_uploader("Cargar Audio", type=["mp3", "mp4", "wav", "m4a"])
 
     if audio_file:
@@ -58,26 +59,22 @@ if st.button("Transcribir"):
         key=os.path.getctime,
     )
 
-    # transcribir el audio utilizando el modelo TextDavinci-002 de OpenAI
-    with open(audio_file_path, "rb") as audio_file:
-        audio_content = audio_file.read()
+    # transcribir
+    audio_file = open(audio_file_path, "rb")
 
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            audio=audio_content,
-            content_type="audio/mp3",
-            max_tokens=2048,
-            temperature=0.5,
-        )
+    transcript = transcribe(audio_file)
+    text = transcript["text"]
 
-        text = response.choices[0].text
+    # ordenar y editar el transcript
+    text = text.replace("\n", " ")
+    text = " ".join(text.split())
 
     st.header("Transcripción")
     st.write(text)
 
-    # guardar la transcripción en un archivo de texto
-    with open("transcripcion.txt", "w") as f:
+    # guardar el transcript en un archivo de texto
+    with open("transcript.txt", "w") as f:
         f.write(text)
 
-    # descargar la transcripción
+    # descargar el transcript
     st.download_button('Descargar Transcripción', text)
