@@ -78,6 +78,12 @@ if st.button("Transcribir"):
     )
     edited_text = response.choices[0].text.strip()
 
-    # mostrar la transcripción editada
-    st.header("Transcripción Editada")
-    st.write(edited_text', edited_text)
+    st.header("Transcripción editada")
+    st.write(edited_text)
+
+    # guardar la transcripción editada en un archivo de texto
+    with open("transcript.txt", "w") as f:
+        f.write(edited_text)
+
+    # descargar la transcripción editada
+    st.download_button('Descargar Transcripción', edited_text)
