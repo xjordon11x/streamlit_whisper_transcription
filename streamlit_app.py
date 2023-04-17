@@ -5,9 +5,6 @@ import streamlit as st
 import openai
 import re
 import nltk
-import spacy
-nlp = spacy.load('en_core_web_sm')
-spacy.load('en_core_web_sm')
 from audio_recorder_streamlit import audio_recorder
 from whisper_API import transcribe
 
@@ -56,39 +53,28 @@ if st.button("Transcribir"):
     
     # transcribir
     audio_file = open(audio_file_path, "rb")
+
     transcript = transcribe(audio_file)
-    
-    if transcript:
-        text = transcript["text"]
+    text = transcript["text"]
 
-        # eliminar repeticiones
+    # Puntuar el texto
+    def punctuate(text):
+        # Tokenizar el texto en oraciones
         sentences = nltk.sent_tokenize(text)
-        new_text = ""
+
+        # Puntuar cada oración y unirlas
+        punctuated_text = []
         for sentence in sentences:
-            words = nltk.word_tokenize(sentence)
-            unique_words = set(words)
-            new_sentence = " ".join(unique_words)
-            new_text += new_sentence.capitalize() + ". "
+            punctuated_sentence = "".join(sentence.split()) + "."
+            punctuated_sentence = nltk.word_tokenize(punctuated_sentence)
+            punctuated_sentence = " ".join(nltk.pos_tag(punctuated_sentence, tagset='universal'))
+            punctuated_sentence = punctuated_sentence.replace(" .", ".").replace(" ,", ",")
+            punctuated_sentence = punctuated_sentence.replace(" :", ":").replace(" ;", ";")
+            punctuated_text.append(punctuated_sentence)
 
-        # producir un texto bien redactado
-        prompt = f"Por favor, edita el siguiente texto para que sea más claro y fácil de entender:\n\n{new_text}"
-        response = openai.Completion.create(
-            engine="davinci",
-            prompt=prompt,
-            temperature=0.7,
-            max_tokens=150,
-            n=1,
-            stop=None,
-            timeout=20,
-        )
+        return " ".join(punctuated_text)
 
-        edited_text = response.choices[0].text.strip()
+    text = punctuate(text)
 
-        # mostrar el transcript y el texto editado
-        st.header("Transcripción")
-        st.write(text)
-
-        st.header("Texto Editado")
-        st.write(edited_text)
-    else:
-        st.warning("No se pudo transcribir el archivo de audio. Intente con otro archivo o grabe uno nuevo.")
+    st.header("Transcripción")
+    st.write(text)
