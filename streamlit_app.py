@@ -3,6 +3,7 @@ import sys
 import datetime
 import streamlit as st
 import openai
+import re
 from audio_recorder_streamlit import audio_recorder
 from whisper_API import transcribe
 
@@ -17,6 +18,18 @@ else:
     # Continuar con el resto del código que utiliza la clave de API
 
 st.title("Piense en voz alta")
+
+# Añadir título e instrucciones en la columna izquierda
+st.sidebar.title("Instrucciones")
+st.sidebar.markdown("""
+1. Suba un archivo de audio (wav o mp3) o grabe hasta 3 minutos. 
+2. Para iniciar o detener la grabación, haga clic en el icono .
+3. Espere a que cargue el archivo o a que se procese la grabación.
+4. Transcriba.
+5. No reconoce archivos .m4a (Mac).
+- Por Moris Polanco, a partir de leopoldpoldus.
+""")
+
 
 # Añadir título e instrucciones en la columna izquierda
 st.sidebar.title("Instrucciones")
@@ -53,11 +66,16 @@ if st.button("Transcribir"):
     transcript = transcribe(audio_file)
     text = transcript["text"]
 
-    # ordenar y mostrar el transcript
-    text = text.replace("\n", " ")
-    text = " ".join(text.split())
+    # quitar repeticiones
+    text = re.sub(r'\b(\w+)( \1\b)+', r'\1', text)
+
+    # eliminar espacios innecesarios y puntuación innecesaria
+    text = re.sub(r'(?<=[.,!?])(?=[^\s])', r' ', text)
+    text = re.sub(r'(?<=[^\s])(?=[.,!?])', r' ', text)
+    text = re.sub(r'\s+', ' ', text)
+
+    # capitalizar la primera letra de cada oración
+    text = ". ".join(map(lambda s: s.strip().capitalize(), text.split(".")))
 
     st.header("Transcripción")
     st.write(text)
-
-    
