@@ -1,15 +1,10 @@
-
 import os
 import sys
 import datetime
 import streamlit as st
 import openai
-from audio_recorder_streamlit import audio_recorder
-from whisper_API import transcribe
 
-working_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(working_dir)
-
+# Configurar la clave de la API de OpenAI
 api_key = st.sidebar.text_input("Ingrese su clave de la API de OpenAI", type="password")
 
 if not api_key:
@@ -17,7 +12,6 @@ if not api_key:
 else:
     openai.api_key = api_key
     # Continuar con el resto del código que utiliza la clave de API
-
 
 st.title("Piense en voz alta")
 
@@ -32,55 +26,58 @@ st.sidebar.markdown("""
 - Por Moris Polanco, a partir de leopoldpoldus.
 """)
 
-
-
-
-
-# tab record audio and upload audio
-tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
+# tab grabar audio y cargar audio
+tab1, tab2 = st.tabs(["Grabar Audio", "Cargar Audio"])
 
 with tab1:
+    # Utilizar el paquete 'audio_recorder_streamlit' para grabar audio
+    from audio_recorder_streamlit import audio_recorder
     audio_bytes = audio_recorder(pause_threshold=180.0)
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        # save audio file to mp3
+        # guardar el archivo de audio en formato mp3
         with open(f"audio_{timestamp}.mp3", "wb") as f:
             f.write(audio_bytes)
 
 with tab2:
-    audio_file = st.file_uploader("Upload Audio", type=["mp3", "mp4", "wav", "m4a"])
+    # Utilizar el método 'file_uploader' de Streamlit para cargar un archivo de audio
+    audio_file = st.file_uploader("Cargar Audio", type=["mp3", "mp4", "wav", "m4a"])
 
     if audio_file:
-        # st.audio(audio_file.read(), format={audio_file.type})
         timestamp = timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        # save audio file with correct extension
+        # guardar el archivo de audio con la extensión correcta
         with open(f"audio_{timestamp}.{audio_file.type.split('/')[1]}", "wb") as f:
             f.write(audio_file.read())
 
-if st.button("Transcribe"):
-    # find newest audio file
+if st.button("Transcribir"):
+    # buscar el archivo de audio más reciente
     audio_file_path = max(
         [f for f in os.listdir(".") if f.startswith("audio")],
         key=os.path.getctime,
     )
 
-    # transcribe
-    audio_file = open(audio_file_path, "rb")
+    # transcribir el audio utilizando el modelo TextDavinci-002 de OpenAI
+    with open(audio_file_path, "rb") as audio_file:
+        audio_content = audio_file.read()
 
-    transcript = transcribe(audio_file)
-    text = transcript["text"]
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            audio=audio_content,
+            content_type="audio/mp3",
+            max_tokens=2048,
+            temperature=0.5,
+        )
 
-    st.header("Transcript")
+        text = response.choices[0].text
+
+    st.header("Transcripción")
     st.write(text)
 
-    # save transcript to text file
-    with open("transcript.txt", "w") as f:
+    # guardar la transcripción en un archivo de texto
+    with open("transcripcion.txt", "w") as f:
         f.write(text)
 
-    # download transcript
-    st.download_button('Download Transcript', text)
-
-
-
+    # descargar la transcripción
+    st.download_button('Descargar Transcripción', text)
