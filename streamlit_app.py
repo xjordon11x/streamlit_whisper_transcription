@@ -31,13 +31,11 @@ st.sidebar.markdown("""
 
 
 
-st.title("Transcripción de Whisper")
-
 # pestañas para grabar o cargar el audio
 tab1, tab2 = st.tabs(["Grabar Audio", "Cargar Audio"])
 
 with tab1:
-    audio_bytes = audio_recorder()
+    audio_bytes = audio_recorder(pause_threshold=180.0)
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
