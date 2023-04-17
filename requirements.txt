@@ -1,5 +1,4 @@
 streamlit
 audio-recorder-streamlit
 openai
-spacy
-en_coe_web_sm
+nltk
