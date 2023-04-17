@@ -5,6 +5,7 @@ import streamlit as st
 import openai
 import re
 import nltk
+import spacy
 spacy.load('en_core_web_sm')
 from audio_recorder_streamlit import audio_recorder
 from whisper_API import transcribe
