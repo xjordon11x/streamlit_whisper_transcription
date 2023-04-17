@@ -34,6 +34,12 @@ st.sidebar.markdown("""
 - Por Moris Polanco, a partir de leopoldpoldus.
 """)
 
+
+def transcribe(audio_file):
+    transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    return transcript
+
+
 # grabar audio
 audio_bytes = audio_recorder(pause_threshold=180.0)
 if audio_bytes:
