@@ -29,41 +29,47 @@ st.sidebar.markdown("""
 - Por Moris Polanco, a partir de leopoldpoldus.
 """)
 
+# agregar área de texto para pegar la transcripción original
+original_text = st.text_area("Pega la transcripción original aquí")
 
-# grabar audio
-audio_bytes = audio_recorder()
-if audio_bytes:
-    st.audio(audio_bytes, format="audio/wav")
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+if not original_text:
+    # grabar audio si no se ha pegado la transcripción original
+    audio_bytes = audio_recorder()
+    if audio_bytes:
+        st.audio(audio_bytes, format="audio/wav")
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    # guardar el archivo de audio en formato mp3
-    with open(f"audio_{timestamp}.mp3", "wb") as f:
-        f.write(audio_bytes)
+        # guardar el archivo de audio en formato mp3
+        with open(f"audio_{timestamp}.mp3", "wb") as f:
+            f.write(audio_bytes)
 
-if st.button("Transcribir"):
-    # buscar el archivo de audio más reciente
+    # transcribir el audio
     audio_file_path = max(
         [f for f in os.listdir(".") if f.startswith("audio")],
         key=os.path.getctime,
     )
 
-    # transcribir
     audio_file = open(audio_file_path, "rb")
 
     transcript = transcribe(audio_file)
     text = transcript["text"]
+else:
+    # generar una nueva transcripción con Text-Davinci-003
+    text = original_text.strip()
+    transcript = openai_transcribe(text)
+    text = transcript["text"]
 
-    # sugerir ediciones con Whisper
-    edited_text = whisper(text)
-    st.write("Whisper sugiere:", edited_text)
+# ordenar y editar el transcript
+text = text.replace("\n", " ")
+text = " ".join(text.split())
 
-    # permitir al usuario editar la transcripción
-    edited_text = st.text_area("Edite la transcripción", edited_text)
-    st.write(edited_text)
+st.header("Transcripción")
+edited_text = st.text_area("Edite la transcripción", text)
+st.write(edited_text)
 
-    # guardar el transcript en un archivo de texto
-    with open("transcript.txt", "w") as f:
-        f.write(edited_text)
+# guardar el transcript en un archivo de texto
+with open("transcript.txt", "w") as f:
+    f.write(edited_text)
 
-    # descargar el transcript
-    st.download_button('Descargar Transcripción', edited_text)
+# descargar el transcript
+st.download_button('Descargar Transcripción', edited_text)
