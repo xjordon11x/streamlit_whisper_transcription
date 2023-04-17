@@ -30,7 +30,6 @@ st.sidebar.markdown("""
 - Por Moris Polanco, a partir de leopoldpoldus.
 """)
 
-
 # grabar audio
 audio_bytes = audio_recorder(pause_threshold=180.0)
 if audio_bytes:
@@ -48,38 +47,41 @@ if st.button("Transcribir"):
         key=os.path.getctime,
     )
 
-
     # transcribir
     audio_file = open(audio_file_path, "rb")
-
     transcript = transcribe(audio_file)
-    text = transcript["text"]
+    
+    if transcript:
+        text = transcript["text"]
 
-    # eliminar repeticiones
-    sentences = text.split(".")
-    new_text = ""
-    for sentence in sentences:
-        words = sentence.split()
-        unique_words = set(words)
-        new_sentence = " ".join(unique_words)
-        new_text += new_sentence.capitalize() + ". "
+        # eliminar repeticiones
+        sentences = text.split(".")
+        new_text = ""
+        for sentence in sentences:
+            words = sentence.split()
+            unique_words = set(words)
+            new_sentence = " ".join(unique_words)
+            new_text += new_sentence.capitalize() + ". "
 
-    # producir un texto bien redactado
-    prompt = f"Por favor, edita el siguiente texto para que sea más claro y fácil de entender:\n\n{new_text}"
-    response = openai.Completion.create(
-        engine="davinci",
-        prompt=prompt,
-        temperature=0.7,
-        max_tokens=150,
-        n=1,
-        stop=None,
-        timeout=20,
-    )
+        # producir un texto bien redactado
+        prompt = f"Por favor, edita el siguiente texto para que sea más claro y fácil de entender:\n\n{new_text}"
+        response = openai.Completion.create(
+            engine="davinci",
+            prompt=prompt,
+            temperature=0.7,
+            max_tokens=150,
+            n=1,
+            stop=None,
+            timeout=20,
+        )
 
-    edited_text = response.choices[0].text.strip()
+        edited_text = response.choices[0].text.strip()
 
-    # mostrar el transcript y el texto editado
-    st.header("Transcripción")
-    st.write(text)
+        # mostrar el transcript y el texto editado
+        st.header("Transcripción")
+        st.write(text)
 
-    st.header("Texto Editado")
+        st.header("Texto Editado")
+        st.write(edited_text)
+    else:
+        st.warning("No se pudo transcribir el archivo de audio. Intente con otro archivo o grabe uno nuevo.")
