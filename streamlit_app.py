@@ -4,7 +4,7 @@ import datetime
 import streamlit as st
 import openai
 import re
-import spacy
+import nltk
 from audio_recorder_streamlit import audio_recorder
 from whisper_API import transcribe
 
@@ -48,6 +48,9 @@ if st.button("Transcribir"):
         key=os.path.getctime,
     )
 
+    
+    
+    
     # transcribir
     audio_file = open(audio_file_path, "rb")
     transcript = transcribe(audio_file)
@@ -56,27 +59,27 @@ if st.button("Transcribir"):
         text = transcript["text"]
 
         # eliminar repeticiones
-        sentences = text.split(".")
+        sentences = nltk.sent_tokenize(text)
         new_text = ""
         for sentence in sentences:
-            words = sentence.split()
+            words = nltk.word_tokenize(sentence)
             unique_words = set(words)
             new_sentence = " ".join(unique_words)
             new_text += new_sentence.capitalize() + ". "
 
         # producir un texto bien redactado
-        nlp = spacy.load("en_core_web_sm")
-        doc = nlp(new_text)
-        edited_text = ""
-        for sent in doc.sents:
-            sent_doc = nlp(sent.text)
-            for token in sent_doc:
-                if token.pos_ == "ADP" and token.text == "a":
-                    edited_text += token.text
-                elif token.text.isnumeric():
-                    edited_text += "#" * len(token.text)
-                else:
-                    edited_text += token.text_with_ws
+        prompt = f"Por favor, edita el siguiente texto para que sea más claro y fácil de entender:\n\n{new_text}"
+        response = openai.Completion.create(
+            engine="davinci",
+            prompt=prompt,
+            temperature=0.7,
+            max_tokens=150,
+            n=1,
+            stop=None,
+            timeout=20,
+        )
+
+        edited_text = response.choices[0].text.strip()
 
         # mostrar el transcript y el texto editado
         st.header("Transcripción")
