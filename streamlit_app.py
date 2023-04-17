@@ -64,7 +64,7 @@ if st.button("Transcribir"):
             new_text += new_sentence.capitalize() + ". "
 
         # producir un texto bien redactado
-        prompt = f"Por favor, edita el siguiente texto para que sea más claro y fácil de entender:\n\n{new_text}"
+        prompt = f"Por favor, edita el siguiente texto para que sea más claro y fácil de entender:\n\n{text}"
         response = openai.Completion.create(
             engine="davinci",
             prompt=prompt,
