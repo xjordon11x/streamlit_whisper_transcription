@@ -6,6 +6,7 @@ import openai
 import re
 import nltk
 import spacy
+nlp = spacy.load('en_core_web_sm')
 spacy.load('en_core_web_sm')
 from audio_recorder_streamlit import audio_recorder
 from whisper_API import transcribe
