@@ -3,4 +3,3 @@ audio-recorder-streamlit
 openai
 nltk
 spacy
-nlp = spacy.load('en_core_web_sm')
