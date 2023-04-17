@@ -60,9 +60,4 @@ if st.button("Transcribir"):
     st.header("Transcripción")
     st.write(text)
 
-    # guardar el transcript en un archivo de texto
-    with open("transcript.txt", "w") as f:
-        f.write(text)
-
-    # descargar la transcripción editada
-    st.download_button('Descargar Transcripción', edited_text)
+    
