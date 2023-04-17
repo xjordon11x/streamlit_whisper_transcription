@@ -30,28 +30,15 @@ st.sidebar.markdown("""
 """)
 
 
+# grabar audio
+audio_bytes = audio_recorder()
+if audio_bytes:
+    st.audio(audio_bytes, format="audio/wav")
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-# pestañas para grabar o cargar el audio
-tab1, tab2 = st.tabs(["Grabar Audio", "Cargar Audio"])
-
-with tab1:
-    audio_bytes = audio_recorder(pause_threshold=180.0)
-    if audio_bytes:
-        st.audio(audio_bytes, format="audio/wav")
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-
-        # guardar el archivo de audio en formato mp3
-        with open(f"audio_{timestamp}.mp3", "wb") as f:
-            f.write(audio_bytes)
-
-with tab2:
-    audio_file = st.file_uploader("Cargar Audio", type=["mp3", "mp4", "wav", "m4a"])
-
-    if audio_file:
-        timestamp = timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        # guardar el archivo de audio con la extensión correcta
-        with open(f"audio_{timestamp}.{audio_file.type.split('/')[1]}", "wb") as f:
-            f.write(audio_file.read())
+    # guardar el archivo de audio en formato mp3
+    with open(f"audio_{timestamp}.mp3", "wb") as f:
+        f.write(audio_bytes)
 
 if st.button("Transcribir"):
     # buscar el archivo de audio más reciente
@@ -66,16 +53,17 @@ if st.button("Transcribir"):
     transcript = transcribe(audio_file)
     text = transcript["text"]
 
-    # ordenar y editar el transcript
-    text = text.replace("\n", " ")
-    text = " ".join(text.split())
+    # sugerir ediciones con Whisper
+    edited_text = whisper(text)
+    st.write("Whisper sugiere:", edited_text)
 
-    st.header("Transcripción")
-    st.write(text)
+    # permitir al usuario editar la transcripción
+    edited_text = st.text_area("Edite la transcripción", edited_text)
+    st.write(edited_text)
 
     # guardar el transcript en un archivo de texto
     with open("transcript.txt", "w") as f:
-        f.write(text)
+        f.write(edited_text)
 
     # descargar el transcript
-    st.download_button('Descargar Transcripción', text)
+    st.download_button('Descargar Transcripción', edited_text)
