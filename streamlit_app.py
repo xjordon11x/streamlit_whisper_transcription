@@ -7,6 +7,7 @@ import re
 import nltk
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
+nltk.download('universal_tagset')
 from audio_recorder_streamlit import audio_recorder
 from whisper_API import transcribe
 
