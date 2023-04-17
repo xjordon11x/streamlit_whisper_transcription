@@ -29,47 +29,55 @@ st.sidebar.markdown("""
 - Por Moris Polanco, a partir de leopoldpoldus.
 """)
 
-# agregar área de texto para pegar la transcripción original
-original_text = st.text_area("Pega la transcripción original aquí")
 
-if not original_text:
-    # grabar audio si no se ha pegado la transcripción original
-    audio_bytes = audio_recorder()
-    if audio_bytes:
-        st.audio(audio_bytes, format="audio/wav")
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+# grabar audio
+audio_bytes = audio_recorder()
+if audio_bytes:
+    st.audio(audio_bytes, format="audio/wav")
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        # guardar el archivo de audio en formato mp3
-        with open(f"audio_{timestamp}.mp3", "wb") as f:
-            f.write(audio_bytes)
+    # guardar el archivo de audio en formato mp3
+    with open(f"audio_{timestamp}.mp3", "wb") as f:
+        f.write(audio_bytes)
 
-    # transcribir el audio
+if st.button("Transcribir"):
+    # buscar el archivo de audio más reciente
     audio_file_path = max(
         [f for f in os.listdir(".") if f.startswith("audio")],
         key=os.path.getctime,
     )
 
+    # transcribir
     audio_file = open(audio_file_path, "rb")
 
     transcript = transcribe(audio_file)
     text = transcript["text"]
-else:
-    # generar una nueva transcripción con Text-Davinci-003
-    text = original_text.strip()
-    transcript = openai_transcribe(text)
-    text = transcript["text"]
 
-# ordenar y editar el transcript
-text = text.replace("\n", " ")
-text = " ".join(text.split())
+    # ordenar y mostrar el transcript
+    text = text.replace("\n", " ")
+    text = " ".join(text.split())
 
-st.header("Transcripción")
-edited_text = st.text_area("Edite la transcripción", text)
-st.write(edited_text)
+    st.header("Transcripción")
+    st.write(text)
 
-# guardar el transcript en un archivo de texto
-with open("transcript.txt", "w") as f:
-    f.write(edited_text)
+    # guardar el transcript en un archivo de texto
+    with open("transcript.txt", "w") as f:
+        f.write(text)
 
-# descargar el transcript
-st.download_button('Descargar Transcripción', edited_text)
+    # editar la transcripción con Davinci
+    st.header("Edición de Transcripción con Davinci")
+    prompt = "Como editor de transcripción, su responsabilidad es asegurar que el material transcrito sea preciso, completo y tenga un formato adecuado. Básicamente, usted es el guardián encargado de asegurarse de que el producto final cumpla con los más altos estándares de calidad. Su trabajo requiere una atención meticulosa al detalle, excelentes habilidades gramaticales y de ortografía, y la capacidad de trabajar rápidamente sin sacrificar la precisión.\n\nAlgunas de las tareas clave que realizará como editor de transcripción incluyen verificar la identidad de los hablantes, corregir errores gramaticales, mejorar la claridad del habla, ajustar el formato según sea necesario y asegurarse de que cualquier término técnico o jerga se escriba correctamente. También será responsable de revisar las transcripciones para asegurarse de que estén libres de cualquier información confidencial o privada que no deba ser pública.\n\nPara tener éxito en este rol, debe tener fuertes habilidades de comunicación, ser capaz de trabajar bien bajo presión y sentirse cómodo usando software de computadora y otras herramientas tecnológicas. También debe ser detallista, comprometido con la precisión y tener una pasión por asegurarse de que el contenido escrito sea profesional, pulido y consistente en estilo y tono."
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=1024,
+        temperature=0.7,
+        n = 1,
+        stop=None,
+        timeout=10
+    )
+    edited_text = response.choices[0].text.strip()
+
+    # mostrar la transcripción editada
+    st.header("Transcripción Editada")
+    st.write(edited_text', edited_text)
