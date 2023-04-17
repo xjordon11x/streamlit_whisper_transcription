@@ -3,6 +3,9 @@ import sys
 import datetime
 import streamlit as st
 import openai
+from audio_recorder_streamlit import audio_recorder
+from whisper_API import transcribe
+
 
 # Configurar la clave de la API de OpenAI
 api_key = st.sidebar.text_input("Ingrese su clave de la API de OpenAI", type="password")
