@@ -5,6 +5,7 @@ import streamlit as st
 import openai
 import re
 import nltk
+nltk.download('punkt')
 from audio_recorder_streamlit import audio_recorder
 from whisper_API import transcribe
 
