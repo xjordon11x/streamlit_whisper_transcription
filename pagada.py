@@ -59,22 +59,23 @@ with tab2:
         with open(f"audio_{timestamp}.{audio_file.type.split('/')[1]}", "wb") as f:
             f.write(audio_file.read())
 
-if st.button("Transcriba"):
-    # find newest audio file
-    audio_file_path = max(
-        [f for f in os.listdir(".") if f.startswith("audio")],
-        key=os.path.getctime,
-    )
-    # transcribe
-    audio_file = open(audio_file_path, "rb")
-    transcript = transcribe(audio_file)
-    text = transcript["text"]
-    # generate well-written text
-    well_written_text = generate_text(text)
-    st.header("Lo que usted quiere decir es:")
-    st.write(well_written_text)
-    # save transcript to text file
-    with open("transcript.txt", "w") as f:
-        f.write(well_written_text)
-    # download transcript
+if st.button("Transcribir"):     
+    # find newest audio file     
+    audio_file_path = max(         
+        [f for f in os.listdir(".") if f.startswith("audio")],         
+        key=os.path.getctime,     
+    )     
+    # transcribe     
+    audio_file = open(audio_file_path, "rb")     
+    transcript = transcribe(audio_file)     
+    text = transcript["text"]     
+    # generate well-written text     
+    prompt = "Por favor, escriba un texto bien redactado a partir de la siguiente transcripción:\n" + text
+    well_written_text = generate_text(prompt)     
+    st.header("Texto bien redactado:")     
+    st.write(well_written_text)     
+    # save transcript to text file     
+    with open("transcript.txt", "w") as f:         
+        f.write(well_written_text)     
+    # download transcript     
     st.download_button('Descarge la transcripción', well_written_text)
