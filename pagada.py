@@ -1,17 +1,14 @@
 import os
 import sys
 import datetime
-import streamlit as st
-import openai
-from audio_recorder_streamlit import audio_recorder
-from whisper_API import transcribe
-
-def transcribe(audio_file):
-    transcript = openai.Audio.transcribe("whisper-1", audio_file)
-    return transcript
 
 working_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(working_dir)
+
+import streamlit as st
+
+from audio_recorder_streamlit import audio_recorder
+from whisper_API import transcribe
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
