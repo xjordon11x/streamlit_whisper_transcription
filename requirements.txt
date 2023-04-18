@@ -2,4 +2,3 @@ streamlit
 audio-recorder-streamlit
 openai
 whisper_API
-whisper
