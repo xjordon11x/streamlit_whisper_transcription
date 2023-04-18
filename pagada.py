@@ -1,7 +1,7 @@
 import os
 import sys
 import datetime
-import opeai
+import openai
 import streamlit as st
 
 working_dir = os.path.dirname(os.path.abspath(__file__))
