@@ -17,11 +17,8 @@ api_key = st.sidebar.text_input("Ingrese su clave de la API de OpenAI", type="pa
 if not api_key:
     st.warning("Por favor ingrese una clave de API válida para continuar.")
 else:
-    api_nombre = "api_" + api_key
     openai.api_key = api_key
-    
     # Continuar con el resto del código que utiliza la clave de API
-
 
 # Añadir título e instrucciones en la columna izquierda
 st.sidebar.title("Instrucciones")
