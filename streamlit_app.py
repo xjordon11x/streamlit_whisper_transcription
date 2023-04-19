@@ -19,7 +19,7 @@ if not api_key:
 else:
     api_nombre = "api_" + api_key
     openai.api_key = api_key
-    crear_carpeta(api_nombre)
+    
     # Continuar con el resto del código que utiliza la clave de API
 
 
