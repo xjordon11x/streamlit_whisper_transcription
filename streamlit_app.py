@@ -2,19 +2,13 @@ import os
 import sys
 import datetime
 import openai
+import time
 import streamlit as st
 
 from audio_recorder_streamlit import audio_recorder
 
 working_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(working_dir)
-
-
-# Función para crear una carpeta para cada API
-def crear_carpeta(api_nombre):
-    path = os.path.join(".", api_nombre)
-    if not os.path.exists(path):
-        os.makedirs(path)
 
 
 # Configurar la clave de la API de OpenAI
@@ -61,25 +55,46 @@ def summarize(text):
 
 st.title("Whisper Transcription")
 
-# tab record audio
-audio_bytes = audio_recorder(pause_threshold=180)
-if audio_bytes:
-    st.audio(audio_bytes, format="audio/wav")
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+# tab record audio and upload audio
+tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
 
-    # save audio file to mp3
-    with open(os.path.join(api_nombre, f"audio_{timestamp}.mp3"), "wb") as f:
-        f.write(audio_bytes)
+with tab1:
+    audio_bytes = audio_recorder(pause_threshold=180)
+    if audio_bytes:
+        st.audio(audio_bytes, format="audio/wav")
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        # save audio file to mp3
+        with open(f"audio_{timestamp}.mp3", "wb") as f:
+            f.write(audio_bytes)
+
+        # borrar el archivo de audio después de 3 minutos
+        time.sleep(180)
+        os.remove(f"audio_{timestamp}.mp3")
+
+with tab2:
+    audio_file = st.file_uploader("Upload Audio", type=["mp3", "mp4", "wav", "m4a"])
+
+    if audio_file:
+        # st.audio(audio_file.read(), format={audio_file.type})
+        timestamp = timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        # save audio file with correct extension
+        with open(f"audio_{timestamp}.{audio_file.type.split('/')[1]}", "wb") as f:
+            f.write(audio_file.read())
+
+        # borrar el archivo de audio después de 3 minutos
+        time.sleep(180)
+        os.remove(f"audio_{timestamp}.{audio_file.type.split('/')[1]}")
 
 if st.button("Transcribe"):
     # find newest audio file
     audio_file_path = max(
-        [f for f in os.listdir(api_nombre) if f.startswith("audio")],
+        [f for f in os.listdir(".") if f.startswith("audio")],
         key=os.path.getctime,
     )
 
     # transcribe
-    audio_file = open(os.path.join(api_nombre, audio_file_path), "rb")
+    audio_file = open(audio_file_path, "rb")
 
     transcript = transcribe(audio_file)
     text = transcript["text"]
@@ -94,12 +109,16 @@ if st.button("Transcribe"):
     st.write(summary)
 
     # save transcript and summary to text files
-    with open(os.path.join(api_nombre, "transcript.txt"), "w") as f:
+    with open("transcript.txt", "w") as f:
         f.write(text)
 
-    with open(os.path.join(api_nombre, "summary.txt"), "w") as f:
+    with open("summary.txt", "w") as f:
         f.write(summary)
 
     # download transcript and summary
     st.download_button('Download Transcript', text)
     st.download_button('Download Summary', summary)
+
+    # borrar los archivos de texto después de 3 minutos
+    time.sleep(180)
+    os.remove("transcript.txt")
