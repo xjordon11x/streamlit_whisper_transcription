@@ -39,12 +39,13 @@ def summarize(text):
 
     return response.choices[0].text.strip()
 
+st.title("Whisper Transcription")
 
 
 st.sidebar.title("Whisper Transcription")
 
 # Explanation of the app
-st.sidebar.write("""
+st.sidebar.text("""
         This is an app that allows you to transcribe audio files using the OpenAI API. 
         You can either record audio using the 'Record Audio' tab, or upload an audio file 
         using the 'Upload Audio' tab. Once you have recorded or uploaded an audio file, 
