@@ -30,10 +30,10 @@ def summarize(text):
 
     return response.choices[0].text.strip()
 
-st.title("Whisper Transcription")
+st.title("Whisper Transcription and Summarization")
 
 
-st.sidebar.title("Whisper Transcription")
+st.sidebar.title("Whisper Transcription and Summarization")
 
 # Explanation of the app
 st.sidebar.markdown("""
