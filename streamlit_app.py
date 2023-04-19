@@ -2,7 +2,6 @@ import os
 import sys
 import datetime
 import openai
-import time
 import streamlit as st
 
 from audio_recorder_streamlit import audio_recorder
@@ -65,9 +64,6 @@ with tab1:
         with open(f"audio_{timestamp}.mp3", "wb") as f:
             f.write(audio_bytes)
 
-        # borrar el archivo de audio después de 3 minutos
-        time.sleep(180)
-        os.remove(f"audio_{timestamp}.mp3")
 
 with tab2:
     audio_file = st.file_uploader("Upload Audio", type=["mp3", "mp4", "wav", "m4a"])
@@ -79,9 +75,6 @@ with tab2:
         with open(f"audio_{timestamp}.{audio_file.type.split('/')[1]}", "wb") as f:
             f.write(audio_file.read())
 
-        # borrar el archivo de audio después de 3 minutos
-        time.sleep(180)
-        os.remove(f"audio_{timestamp}.{audio_file.type.split('/')[1]}")
 
 if st.button("Transcribe"):
     # find newest audio file
@@ -116,6 +109,7 @@ if st.button("Transcribe"):
     st.download_button('Download Transcript', text)
     st.download_button('Download Summary', summary)
 
-    # borrar los archivos de texto después de 3 minutos
-    time.sleep(180)
+    # delete audio and text files
+    os.remove(audio_file_path)
     os.remove("transcript.txt")
+    os.remove("summary.txt")
