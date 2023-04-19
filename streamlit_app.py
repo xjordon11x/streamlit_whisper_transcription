@@ -4,11 +4,17 @@ import datetime
 import openai
 import streamlit as st
 
-
 from audio_recorder_streamlit import audio_recorder
 
 working_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(working_dir)
+
+
+# Función para crear una carpeta para cada API
+def crear_carpeta(api_nombre):
+    path = os.path.join(".", api_nombre)
+    if not os.path.exists(path):
+        os.makedirs(path)
 
 
 # Configurar la clave de la API de OpenAI
@@ -17,7 +23,9 @@ api_key = st.sidebar.text_input("Ingrese su clave de la API de OpenAI", type="pa
 if not api_key:
     st.warning("Por favor ingrese una clave de API válida para continuar.")
 else:
+    api_nombre = "api_" + api_key
     openai.api_key = api_key
+    crear_carpeta(api_nombre)
     # Continuar con el resto del código que utiliza la clave de API
 
 
@@ -30,7 +38,6 @@ st.sidebar.markdown("""
 5. No reconoce archivos .m4a (Mac).
 - Por Moris Polanco, a partir de leopoldpoldus.
 """)
-
 
 
 def transcribe(audio_file):
@@ -61,18 +68,18 @@ if audio_bytes:
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
     # save audio file to mp3
-    with open(f"audio_{timestamp}.mp3", "wb") as f:
+    with open(os.path.join(api_nombre, f"audio_{timestamp}.mp3"), "wb") as f:
         f.write(audio_bytes)
 
 if st.button("Transcribe"):
     # find newest audio file
     audio_file_path = max(
-        [f for f in os.listdir(".") if f.startswith("audio")],
+        [f for f in os.listdir(api_nombre) if f.startswith("audio")],
         key=os.path.getctime,
     )
 
     # transcribe
-    audio_file = open(audio_file_path, "rb")
+    audio_file = open(os.path.join(api_nombre, audio_file_path), "rb")
 
     transcript = transcribe(audio_file)
     text = transcript["text"]
@@ -87,10 +94,10 @@ if st.button("Transcribe"):
     st.write(summary)
 
     # save transcript and summary to text files
-    with open("transcript.txt", "w") as f:
+    with open(os.path.join(api_nombre, "transcript.txt"), "w") as f:
         f.write(text)
 
-    with open("summary.txt", "w") as f:
+    with open(os.path.join(api_nombre, "summary.txt"), "w") as f:
         f.write(summary)
 
     # download transcript and summary
