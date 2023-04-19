@@ -36,7 +36,7 @@ def summarize(text):
 
     return response.choices[0].text.strip()
 
-st.write("Whisper Transcription and Summarization")
+st.markdown("# Whisper Transcription and Summarization")
 
 
 st.sidebar.title("Whisper Transcription and Summarization")
