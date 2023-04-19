@@ -11,10 +11,10 @@ sys.path.append(working_dir)
 
 
 # Configurar la clave de la API de OpenAI
-api_key = st.sidebar.text_input("Ingrese su clave de la API de OpenAI", type="password")
+api_key = st.sidebar.text_input("Enter your OpenAI API key", type="password")
 
 if not api_key:
-    st.warning("Por favor ingrese una clave de API válida para continuar.")
+    st.warning("Please enter a valid API key to continue..")
 else:
     openai.api_key = api_key
     # Continuar con el resto del código que utiliza la clave de API
@@ -40,7 +40,18 @@ def summarize(text):
     return response.choices[0].text.strip()
 
 
+
 st.title("Whisper Transcription")
+
+# Explanation of the app
+st.write("""
+        This is an app that allows you to transcribe audio files using the OpenAI API. 
+        You can either record audio using the 'Record Audio' tab, or upload an audio file 
+        using the 'Upload Audio' tab. Once you have recorded or uploaded an audio file, 
+        click the 'Transcribe' button to transcribe the audio and generate a summary of the 
+        transcript. The transcript and summary can be downloaded using the 'Download Transcript'
+        and 'Download Summary' buttons respectively. 
+        """)
 
 # tab record audio and upload audio
 tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
