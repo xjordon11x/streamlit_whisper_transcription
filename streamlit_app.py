@@ -1,15 +1,14 @@
 import os
 import sys
 import datetime
-import streamlit as st
 import openai
-import re
-import nltk
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
-nltk.download('universal_tagset')
+import streamlit as st
+
+
 from audio_recorder_streamlit import audio_recorder
-from whisper_API import transcribe
+
+working_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(working_dir)
 
 
 # Configurar la clave de la API de OpenAI
@@ -21,13 +20,11 @@ else:
     openai.api_key = api_key
     # Continuar con el resto del código que utiliza la clave de API
 
-st.title("Piense en voz alta")
 
 # Añadir título e instrucciones en la columna izquierda
 st.sidebar.title("Instrucciones")
 st.sidebar.markdown("""
-1. Suba un archivo de audio (wav o mp3) o grabe hasta 3 minutos. 
-2. Para iniciar o detener la grabación, haga clic en el icono .
+1. Para iniciar o detener la grabación, haga clic en el icono .
 3. Espere a que cargue el archivo o a que se procese la grabación.
 4. Transcriba.
 5. No reconoce archivos .m4a (Mac).
@@ -35,55 +32,67 @@ st.sidebar.markdown("""
 """)
 
 
+
 def transcribe(audio_file):
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     return transcript
 
 
-# grabar audio
-audio_bytes = audio_recorder(pause_threshold=180.0)
+def summarize(text):
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=(
+            f"Please summarize the following text:\n"
+            f"{text}"
+        ),
+        temperature=0.5,
+        max_tokens=160,
+    )
+
+    return response.choices[0].text.strip()
+
+
+st.title("Whisper Transcription")
+
+# tab record audio
+audio_bytes = audio_recorder(pause_threshold=180)
 if audio_bytes:
     st.audio(audio_bytes, format="audio/wav")
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    # guardar el archivo de audio en formato mp3
+    # save audio file to mp3
     with open(f"audio_{timestamp}.mp3", "wb") as f:
         f.write(audio_bytes)
 
-if st.button("Transcribir"):
-    # buscar el archivo de audio más reciente
+if st.button("Transcribe"):
+    # find newest audio file
     audio_file_path = max(
         [f for f in os.listdir(".") if f.startswith("audio")],
         key=os.path.getctime,
     )
 
-    
-    
-    
-    # transcribir
+    # transcribe
     audio_file = open(audio_file_path, "rb")
 
     transcript = transcribe(audio_file)
     text = transcript["text"]
 
-    # Puntuar el texto
-    def punctuate(text):
-        # Tokenizar el texto en oraciones
-        sentences = nltk.sent_tokenize(text)
-
-        # Puntuar cada oración y unirlas
-        punctuated_text = []
-        for sentence in sentences:
-            punctuated_sentence = "".join(sentence.split()) + "."
-            punctuated_sentence = nltk.word_tokenize(punctuated_sentence)
-            punctuated_sentence = " ".join(nltk.pos_tag(punctuated_sentence, tagset='universal'))
-            punctuated_sentence = punctuated_sentence.replace(" .", ".").replace(" ,", ",")
-            punctuated_sentence = punctuated_sentence.replace(" :", ":").replace(" ;", ";")
-            punctuated_text.append(punctuated_sentence)
-
-        return " ".join(punctuated_text)
-
-    text = punctuate(text)
-
-    st.header("Transcripción")
+    st.header("Transcript")
     st.write(text)
+
+    # summarize
+    summary = summarize(text)
+
+    st.header("Summary")
+    st.write(summary)
+
+    # save transcript and summary to text files
+    with open("transcript.txt", "w") as f:
+        f.write(text)
+
+    with open("summary.txt", "w") as f:
+        f.write(summary)
+
+    # download transcript and summary
+    st.download_button('Download Transcript', text)
+    st.download_button('Download Summary', summary)
