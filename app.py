@@ -1,38 +1,54 @@
 import os
 import sys
 import datetime
-import streamlit as st
 import openai
+import streamlit as st
+
 from audio_recorder_streamlit import audio_recorder
-from whisper_API import transcribe
 
 working_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(working_dir)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+def transcribe(audio_file):
+    transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    return transcript
 
-st.title("Piense en voz alta")
 
-# Añadir título e instrucciones en la columna izquierda
-st.sidebar.title("Instrucciones")
+def summarize(text):
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=(
+            f"Please summarize the following text:\n"
+            f"{text}"
+        ),
+        temperature=0.5,
+        max_tokens=160,
+    )
+
+    return response.choices[0].text.strip()
+
+st.title("Whisper Transcription and Summarization")
+
+
+st.sidebar.title("Whisper Transcription and Summarization")
+
+# Explanation of the app
 st.sidebar.markdown("""
-1. Suba un archivo de audio (wav o mp3) o grabe hasta 3 minutos. 
-2. Para iniciar o detener la grabación, haga clic en el icono .
-3. Espere a que cargue el archivo o a que se procese la grabación.
-4. Transcriba.
-5. No reconoce archivos .m4a (Mac).
-- Por Moris Polanco, a partir de leopoldpoldus.
-""")
-
-
-st.title("Whisper Transcription")
+        This is an app that allows you to transcribe audio files using the OpenAI API. 
+        You can either record audio using the 'Record Audio' tab, or upload an audio file 
+        using the 'Upload Audio' tab. Once you have recorded or uploaded an audio file, 
+        click the 'Transcribe' button to transcribe the audio and generate a summary of the 
+        transcript. The transcript and summary can be downloaded using the 'Download Transcript'
+        and 'Download Summary' buttons respectively. 
+        """)
 
 # tab record audio and upload audio
 tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
 
 with tab1:
-    audio_bytes = audio_recorder()
+    audio_bytes = audio_recorder(pause_threshold=180)
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -52,11 +68,16 @@ with tab2:
             f.write(audio_file.read())
 
 if st.button("Transcribe"):
-    # find newest audio file
-    audio_file_path = max(
-        [f for f in os.listdir(".") if f.startswith("audio")],
-        key=os.path.getctime,
+    # check if audio file exists
+    if not any(f.startswith("audio") for f in os.listdir(".")):
+        st.warning("Please record or upload an audio file first.")
+    else:
+        # find newest audio file
+        audio_file_path = max(
+            [f for f in os.listdir(".") if f.startswith("audio")],
+            key=os.path.getctime,
     )
+        
 
     # transcribe
     audio_file = open(audio_file_path, "rb")
@@ -67,19 +88,26 @@ if st.button("Transcribe"):
     st.header("Transcript")
     st.write(text)
 
-    # save transcript to text file
+    # summarize
+    summary = summarize(text)
+
+    st.header("Summary")
+    st.write(summary)
+
+    # save transcript and summary to text files
     with open("transcript.txt", "w") as f:
         f.write(text)
 
-    # download transcript
+    with open("summary.txt", "w") as f:
+        f.write(summary)
+
+    # download transcript and summary
     st.download_button('Download Transcript', text)
+    st.download_button('Download Summary', summary)
 
-
-
-
-
-
-
-
-
-
+# delete audio and text files when leaving app
+if not st.session_state.get('cleaned_up'):
+    files = [f for f in os.listdir(".") if f.startswith("audio") or f.endswith(".txt")]
+    for file in files:
+        os.remove(file)
+    st.session_state['cleaned_up'] = True
