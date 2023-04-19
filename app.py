@@ -11,6 +11,13 @@ sys.path.append(working_dir)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+def hide_anchor_link():
+    st.markdown("""
+        <style>
+        .css-15zrgzn {display: none}
+        </style>
+        """, unsafe_allow_html=True)
+
 def transcribe(audio_file):
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     return transcript
