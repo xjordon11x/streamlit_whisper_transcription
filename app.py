@@ -36,7 +36,7 @@ def summarize(text):
 
     return response.choices[0].text.strip()
 
-st.latex("Whisper\n Transcription\n and\n Summarization")
+st.latex("Whisper/ Transcription/ and/ Summarization")
 
 
 st.sidebar.title("Whisper Transcription and Summarization")
