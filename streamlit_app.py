@@ -66,11 +66,16 @@ with tab2:
             f.write(audio_file.read())
 
 if st.button("Transcribe"):
-    # find newest audio file
-    audio_file_path = max(
-        [f for f in os.listdir(".") if f.startswith("audio")],
-        key=os.path.getctime,
+    # check if audio file exists
+    if not any(f.startswith("audio") for f in os.listdir(".")):
+        st.warning("Please record or upload an audio file first.")
+    else:
+        # find newest audio file
+        audio_file_path = max(
+            [f for f in os.listdir(".") if f.startswith("audio")],
+            key=os.path.getctime,
     )
+        
 
     # transcribe
     audio_file = open(audio_file_path, "rb")
