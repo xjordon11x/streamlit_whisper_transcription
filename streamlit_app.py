@@ -19,15 +19,6 @@ else:
     openai.api_key = api_key
     # Continuar con el resto del código que utiliza la clave de API
 
-# Añadir título e instrucciones en la columna izquierda
-st.sidebar.title("Instrucciones")
-st.sidebar.markdown("""
-1. Para iniciar o detener la grabación, haga clic en el icono .
-3. Espere a que cargue el archivo o a que se procese la grabación.
-4. Transcriba.
-5. No reconoce archivos .m4a (Mac).
-- Por Moris Polanco, a partir de leopoldpoldus.
-""")
 
 
 def transcribe(audio_file):
@@ -64,7 +55,6 @@ with tab1:
         with open(f"audio_{timestamp}.mp3", "wb") as f:
             f.write(audio_bytes)
 
-
 with tab2:
     audio_file = st.file_uploader("Upload Audio", type=["mp3", "mp4", "wav", "m4a"])
 
@@ -74,7 +64,6 @@ with tab2:
         # save audio file with correct extension
         with open(f"audio_{timestamp}.{audio_file.type.split('/')[1]}", "wb") as f:
             f.write(audio_file.read())
-
 
 if st.button("Transcribe"):
     # find newest audio file
@@ -109,7 +98,9 @@ if st.button("Transcribe"):
     st.download_button('Download Transcript', text)
     st.download_button('Download Summary', summary)
 
-    # delete audio and text files
-    os.remove(audio_file_path)
-    os.remove("transcript.txt")
-    os.remove("summary.txt")
+# delete audio and text files when leaving app
+if not st.session_state.get('cleaned_up'):
+    files = [f for f in os.listdir(".") if f.startswith("audio") or f.endswith(".txt")]
+    for file in files:
+        os.remove(file)
+    st.session_state['cleaned_up'] = True
