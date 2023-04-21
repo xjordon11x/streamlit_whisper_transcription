@@ -20,7 +20,6 @@ else:
     # Continuar con el resto del código que utiliza la clave de API
 
 
-
 def transcribe(audio_file):
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     return transcript
@@ -39,7 +38,7 @@ def summarize(text):
 
     return response.choices[0].text.strip()
 
-st.header("Whisper Transcription and Summarization")
+st.title("Whisper Transcription and Summarization")
 
 
 st.sidebar.title("Whisper Transcription and Summarization")
