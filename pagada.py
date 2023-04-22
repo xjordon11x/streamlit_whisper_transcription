@@ -18,7 +18,7 @@ def transcribe(audio_file):
     return transcript
 
 
-def summarize(text):
+def generate_email(text):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=(
@@ -31,23 +31,20 @@ def summarize(text):
 
     return response.choices[0].text.strip()
 
-st.title("Whisper Transcription and Summarization")
+st.title("Whisper Transcription and Email Generator")
 
-
-st.sidebar.title("Whisper Transcription and Summarization")
+st.sidebar.title("Whisper Transcription and Email Generator")
 
 # Explanation of the app
 st.sidebar.markdown("""
-        This is an app that allows you to transcribe audio files using the OpenAI API. 
-        You can either record audio using the 'Record Audio' tab, or upload an audio file 
-        using the 'Upload Audio' tab. Once you have recorded or uploaded an audio file, 
-        click the 'Transcribe' button to transcribe the audio and generate a summary of the 
-        transcript. The transcript and summary can be downloaded using the 'Download Transcript'
-        and 'Download Summary' buttons respectively. 
+        This is an app that allows you to transcribe audio files using the OpenAI API and generate an email from the transcribed text. 
+        You can record audio using the 'Record Audio' tab. Once you have recorded audio, 
+        click the 'Transcribe' button to transcribe the audio and generate an email from the 
+        transcript. The email can be copied to your clipboard using the 'Copy Email' button.
         """)
 
-# tab record audio and upload audio
-tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
+# tab record audio
+tab1 = st.tabs(["Record Audio"])
 
 with tab1:
     audio_bytes = audio_recorder(pause_threshold=180)
@@ -59,20 +56,10 @@ with tab1:
         with open(f"audio_{timestamp}.mp3", "wb") as f:
             f.write(audio_bytes)
 
-with tab2:
-    audio_file = st.file_uploader("Upload Audio", type=["mp3", "mp4", "wav", "m4a"])
-
-    if audio_file:
-        # st.audio(audio_file.read(), format={audio_file.type})
-        timestamp = timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        # save audio file with correct extension
-        with open(f"audio_{timestamp}.{audio_file.type.split('/')[1]}", "wb") as f:
-            f.write(audio_file.read())
-
 if st.button("Transcribe"):
     # check if audio file exists
     if not any(f.startswith("audio") for f in os.listdir(".")):
-        st.warning("Please record or upload an audio file first.")
+        st.warning("Please record audio first.")
     else:
         # find newest audio file
         audio_file_path = max(
@@ -90,26 +77,25 @@ if st.button("Transcribe"):
     st.header("Transcript")
     st.write(text)
 
-    # summarize
-    summary = summarize(text)
+    # generate email
+    email_text = generate_email(text)
 
-    st.header("Summary")
-    st.write(summary)
+    st.header("Generated Email")
+    st.write(email_text)
 
-    # save transcript and summary to text files
-    with open("transcript.txt", "w") as f:
-        f.write(text)
+    # copy email to clipboard
+    copy_button = st.button("Copy Email")
+    if copy_button:
+        try:
+            import pyperclip
+            pyperclip.copy(email_text)
+            st.success("Email copied to clipboard.")
+        except:
+            st.warning("Unable to copy email to clipboard.")
 
-    with open("summary.txt", "w") as f:
-        f.write(summary)
-
-    # download transcript and summary
-    st.download_button('Download Transcript', text)
-    st.download_button('Download Summary', summary)
-
-# delete audio and text files when leaving app
+# delete audio file when leaving app
 if not st.session_state.get('cleaned_up'):
-    files = [f for f in os.listdir(".") if f.startswith("audio") or f.endswith(".txt")]
+    files = [f for f in os.listdir(".") if f.startswith("audio")]
     for file in files:
         os.remove(file)
     st.session_state['cleaned_up'] = True
