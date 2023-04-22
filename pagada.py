@@ -1,22 +1,18 @@
 import os
-import sys
 import datetime
 import openai
 import streamlit as st
 
-
 from audio_recorder_streamlit import audio_recorder
 
 working_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(working_dir)
+os.chdir(working_dir)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
 
 def transcribe(audio_file):
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     return transcript
-
 
 def generate_email(text):
     response = openai.Completion.create(
@@ -31,23 +27,33 @@ def generate_email(text):
 
     return response.choices[0].text.strip()
 
-st.title("Whisper Transcription and Email Generator")
+st.set_page_config(page_title="Whisper Transcription and Email Generation")
 
-st.sidebar.title("Whisper Transcription and Email Generator")
+st.title("Whisper Transcription and Email Generation")
 
-# Explanation of the app
-st.sidebar.markdown("""
-        This is an app that allows you to transcribe audio files using the OpenAI API and generate an email from the transcribed text. 
-        You can record audio using the 'Record Audio' tab. Once you have recorded audio, 
+st.markdown("""
+        This is an app that allows you to transcribe audio files using the OpenAI API. 
+        You can record audio using the 'Record Audio' tab. Once you have recorded an audio file, 
         click the 'Transcribe' button to transcribe the audio and generate an email from the 
-        transcript. The email can be copied to your clipboard using the 'Copy Email' button.
+        transcript. The email can be copied using the 'Copy Email' button. 
+        """)
+
+with st.sidebar:
+    st.markdown("""
+        ## Instructions:
+        1. Click on the 'Record Audio' tab.
+        2. Click the 'Start Recording' button to start recording audio.
+        3. When you're done recording, click the 'Stop Recording' button.
+        4. Click the 'Transcribe' button to transcribe the audio and generate an email from the transcript.
+        5. The email can be copied using the 'Copy Email' button.
         """)
 
 # tab record audio
-tab1 = st.tabs(["Record Audio"])
+with st.form("record_audio_form"):
+    st.header("Record Audio")
 
-with tab1:
     audio_bytes = audio_recorder(pause_threshold=180)
+
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -56,42 +62,35 @@ with tab1:
         with open(f"audio_{timestamp}.mp3", "wb") as f:
             f.write(audio_bytes)
 
-if st.button("Transcribe"):
-    # check if audio file exists
+    if st.form_submit_button("Stop Recording"):
+        st.success("Audio recording stopped.")
+
+with st.form("transcribe_audio_form"):
+    st.header("Transcribe Audio")
+
     if not any(f.startswith("audio") for f in os.listdir(".")):
-        st.warning("Please record audio first.")
+        st.warning("Please record an audio file first.")
     else:
-        # find newest audio file
         audio_file_path = max(
             [f for f in os.listdir(".") if f.startswith("audio")],
             key=os.path.getctime,
-    )
-        
+        )
 
-    # transcribe
-    audio_file = open(audio_file_path, "rb")
+        audio_file = open(audio_file_path, "rb")
 
-    transcript = transcribe(audio_file)
-    text = transcript["text"]
+        transcript = transcribe(audio_file)
+        text = transcript["text"]
 
-    st.header("Transcript")
-    st.write(text)
+        st.header("Transcript")
+        st.write(text)
 
-    # generate email
-    email_text = generate_email(text)
+        # generate email
+        email = generate_email(text)
 
-    st.header("Generated Email")
-    st.write(email_text)
+        st.header("Email")
+        st.write(email)
 
-    # copy email to clipboard
-    copy_button = st.button("Copy Email")
-    if copy_button:
-        try:
-            import pyperclip
-            pyperclip.copy(email_text)
-            st.success("Email copied to clipboard.")
-        except:
-            st.warning("Unable to copy email to clipboard.")
+        st.button("Copy Email", to_copy=email)
 
 # delete audio file when leaving app
 if not st.session_state.get('cleaned_up'):
