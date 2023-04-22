@@ -1,4 +1,5 @@
 import os
+import sys
 import datetime
 import openai
 import streamlit as st
@@ -6,54 +7,50 @@ import streamlit as st
 from audio_recorder_streamlit import audio_recorder
 
 working_dir = os.path.dirname(os.path.abspath(__file__))
-os.chdir(working_dir)
+sys.path.append(working_dir)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
 
 def transcribe(audio_file):
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     return transcript
 
+
 def generate_email(text):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=(
-            f"Please generate an email from the following text:\n"
+            f"Please generate an email summarizing the following text:\n"
             f"{text}"
         ),
         temperature=0.5,
-        max_tokens=160,
+        max_tokens=260,
     )
 
     return response.choices[0].text.strip()
 
-st.set_page_config(page_title="Whisper Transcription and Email Generation")
 
-st.title("Whisper Transcription and Email Generation")
+st.text("Whisper Transcription and Email Generation")
 
-st.markdown("""
+
+st.sidebar.title("Whisper Transcription and Email Generation")
+
+# Explanation of the app
+st.sidebar.markdown("""
         This is an app that allows you to transcribe audio files using the OpenAI API. 
-        You can record audio using the 'Record Audio' tab. Once you have recorded an audio file, 
-        click the 'Transcribe' button to transcribe the audio and generate an email from the 
-        transcript. The email can be copied using the 'Copy Email' button. 
+        You can either record audio using the 'Record Audio' tab, or upload an audio file 
+        using the 'Upload Audio' tab. Once you have recorded or uploaded an audio file, 
+        click the 'Transcribe' button to transcribe the audio and generate an email summarizing the 
+        transcript. The transcript and summary can be downloaded using the 'Download Transcript'
+        and 'Download Email' buttons respectively. 
         """)
 
-with st.sidebar:
-    st.markdown("""
-        ## Instructions:
-        1. Click on the 'Record Audio' tab.
-        2. Click the 'Start Recording' button to start recording audio.
-        3. When you're done recording, click the 'Stop Recording' button.
-        4. Click the 'Transcribe' button to transcribe the audio and generate an email from the transcript.
-        5. The email can be copied using the 'Copy Email' button.
-        """)
+# tab record audio and upload audio
+tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
 
-# tab record audio
-with st.form("record_audio_form"):
-    st.header("Record Audio")
-
+with tab1:
     audio_bytes = audio_recorder(pause_threshold=180)
-
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -62,35 +59,53 @@ with st.form("record_audio_form"):
         with open(f"audio_{timestamp}.mp3", "wb") as f:
             f.write(audio_bytes)
 
-    if st.form_submit_button("Stop Recording"):
-        st.success("Audio recording stopped.")
+with tab2:
+    audio_file = st.file_uploader("Upload Audio", type=["mp3", "mp4", "wav", "m4a"])
 
-with st.form("transcribe_audio_form"):
-    st.header("Transcribe Audio")
+    if audio_file:
+        # st.audio(audio_file.read(), format={audio_file.type})
+        timestamp = timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        # save audio file with correct extension
+        with open(f"audio_{timestamp}.{audio_file.type.split('/')[1]}", "wb") as f:
+            f.write(audio_file.read())
 
-    if not any(f.startswith("audio") for f in os.listdir(".")):
-        st.warning("Please record an audio file first.")
+if st.button("Transcribe"):
+    # check if audio file exists
+    audio_files = [f for f in os.listdir(".") if f.startswith("audio")]
+    if not audio_files:
+        st.warning("Please record or upload an audio file first.")
     else:
+        # find newest audio file
         audio_file_path = max(
-            [f for f in os.listdir(".") if f.startswith("audio")],
+            audio_files,
             key=os.path.getctime,
         )
 
-        audio_file = open(audio_file_path, "rb")
-
+        # transcribe
+        audio_file = audio_file.read()
         transcript = transcribe(audio_file)
         text = transcript["text"]
 
         st.header("Transcript")
         st.write(text)
 
-        # generate email
-        email = generate_email(text)
 
-        st.header("Email")
-        st.write(email)
+    # generate email summary
+    summary = generate_email(text)
 
-        st.button("Copy Email", on_click=lambda: st.experimental_set_query_params(copy=email))
+    st.header("Email Summary")
+    st.write(summary)
+
+    # save transcript and summary to text files
+    with open("transcript.txt", "w") as f:
+        f.write(text)
+
+    with open("email_summary.txt", "w") as f:
+        f.write(summary)
+
+    # download transcript and email summary
+    st.download_button('Download Transcript', text)
+    st.download_button('Download Email', summary)
 
 # delete audio file when leaving app
 if not st.session_state.get('cleaned_up'):
