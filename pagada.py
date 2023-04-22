@@ -22,17 +22,16 @@ def summarize(text):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=(
-            f"Please generate an email from the following text:\n"
+            f"Please summarize the following text:\n"
             f"{text}"
         ),
         temperature=0.5,
-        max_tokens=260,
+        max_tokens=160,
     )
 
     return response.choices[0].text.strip()
 
-
-st.text("Whisper Transcription and Email Generation")
+st.title("Whisper Transcription and Summarization")
 
 
 st.sidebar.title("Whisper Transcription and Summarization")
@@ -42,9 +41,9 @@ st.sidebar.markdown("""
         This is an app that allows you to transcribe audio files using the OpenAI API. 
         You can either record audio using the 'Record Audio' tab, or upload an audio file 
         using the 'Upload Audio' tab. Once you have recorded or uploaded an audio file, 
-        click the 'Transcribe' button to transcribe the audio and generate an email from the 
-        transcript. The transcript and email can be downloaded using the 'Download Transcript'
-        and 'Download Email' buttons respectively. 
+        click the 'Transcribe' button to transcribe the audio and generate a summary of the 
+        transcript. The transcript and summary can be downloaded using the 'Download Transcript'
+        and 'Download Summary' buttons respectively. 
         """)
 
 # tab record audio and upload audio
@@ -72,41 +71,41 @@ with tab2:
 
 if st.button("Transcribe"):
     # check if audio file exists
-    audio_files = [f for f in os.listdir(".") if f.startswith("audio")]
-    if not audio_files:
+    if not any(f.startswith("audio") for f in os.listdir(".")):
         st.warning("Please record or upload an audio file first.")
     else:
         # find newest audio file
         audio_file_path = max(
-            audio_files,
+            [f for f in os.listdir(".") if f.startswith("audio")],
             key=os.path.getctime,
-        )
+    )
+        
 
-        # transcribe
-        audio_file = audio_file.read()
-        transcript = transcribe(audio_file)
-        text = transcript["text"]
+    # transcribe
+    audio_file = open(audio_file_path, "rb")
 
-        st.header("Transcript")
-        st.write(text)
+    transcript = transcribe(audio_file)
+    text = transcript["text"]
 
+    st.header("Transcript")
+    st.write(text)
 
     # summarize
     summary = summarize(text)
 
-    st.header("Email")
+    st.header("Summary")
     st.write(summary)
 
     # save transcript and summary to text files
     with open("transcript.txt", "w") as f:
         f.write(text)
 
-    with open("email.txt", "w") as f:
+    with open("summary.txt", "w") as f:
         f.write(summary)
 
     # download transcript and summary
     st.download_button('Download Transcript', text)
-    st.download_button('Download Email', summary)
+    st.download_button('Download Summary', summary)
 
 # delete audio and text files when leaving app
 if not st.session_state.get('cleaned_up'):
