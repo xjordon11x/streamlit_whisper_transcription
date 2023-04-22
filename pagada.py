@@ -20,17 +20,16 @@ def transcribe(audio_file):
 
 def summarize(text):
     response = openai.Completion.create(
-        engine="text-davinci-003"
+        engine="text-davinci-003",
         prompt=(
             f"Please generate an email from the following text:\n"
             f"{text}"
         ),
         temperature=0.5,
-        max_tokens=250,
+        max_tokens=160,
     )
 
     return response.choices[0].text.strip()
-
 st.title("Whisper Transcription and Email Generation")
 
 
