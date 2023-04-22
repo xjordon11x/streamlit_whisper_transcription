@@ -4,6 +4,7 @@ import datetime
 import openai
 import streamlit as st
 
+
 from audio_recorder_streamlit import audio_recorder
 
 working_dir = os.path.dirname(os.path.abspath(__file__))
@@ -17,11 +18,11 @@ def transcribe(audio_file):
     return transcript
 
 
-def generate_email(text):
+def summarize(text):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=(
-            f"Please generate an email summarizing the following text:\n"
+            f"Please generate an email from the following text:\n"
             f"{text}"
         ),
         temperature=0.5,
@@ -34,15 +35,15 @@ def generate_email(text):
 st.text("Whisper Transcription and Email Generation")
 
 
-st.sidebar.title("Whisper Transcription and Email Generation")
+st.sidebar.title("Whisper Transcription and Summarization")
 
 # Explanation of the app
 st.sidebar.markdown("""
         This is an app that allows you to transcribe audio files using the OpenAI API. 
         You can either record audio using the 'Record Audio' tab, or upload an audio file 
         using the 'Upload Audio' tab. Once you have recorded or uploaded an audio file, 
-        click the 'Transcribe' button to transcribe the audio and generate an email summarizing the 
-        transcript. The transcript and summary can be downloaded using the 'Download Transcript'
+        click the 'Transcribe' button to transcribe the audio and generate an email from the 
+        transcript. The transcript and email can be downloaded using the 'Download Transcript'
         and 'Download Email' buttons respectively. 
         """)
 
@@ -90,26 +91,26 @@ if st.button("Transcribe"):
         st.write(text)
 
 
-    # generate email summary
-    summary = generate_email(text)
+    # summarize
+    summary = summarize(text)
 
-    st.header("Email Summary")
+    st.header("Email")
     st.write(summary)
 
     # save transcript and summary to text files
     with open("transcript.txt", "w") as f:
         f.write(text)
 
-    with open("email_summary.txt", "w") as f:
+    with open("email.txt", "w") as f:
         f.write(summary)
 
-    # download transcript and email summary
+    # download transcript and summary
     st.download_button('Download Transcript', text)
     st.download_button('Download Email', summary)
 
-# delete audio file when leaving app
+# delete audio and text files when leaving app
 if not st.session_state.get('cleaned_up'):
-    files = [f for f in os.listdir(".") if f.startswith("audio")]
+    files = [f for f in os.listdir(".") if f.startswith("audio") or f.endswith(".txt")]
     for file in files:
         os.remove(file)
     st.session_state['cleaned_up'] = True
