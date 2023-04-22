@@ -29,6 +29,19 @@ def summarize(text):
 
     return response.choices[0].text.strip()
 
+def generate_mail(text):
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=f"Write a kind email for this: I can not come to work today because im really sick\n\nHi there,\n\nI'm sorry for the short notice, but I won't be able to come in to work today. I'm really sick and need to rest. I'll be back to work tomorrow. Hope you all have a wonderful day.\n\nThanks,\n\n[Your Name]\n\n\nWrite a kind email for this: {text}",
+        temperature=0.7,
+        max_tokens=500,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    return response.choices[0].text
+
+
 st.title("Whisper Transcription and Summarization")
 
 
