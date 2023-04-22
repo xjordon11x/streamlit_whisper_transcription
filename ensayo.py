@@ -22,7 +22,7 @@ def summarize(text):
     response = openai.Completion.create(
         engine="text-davinci-003"
         prompt=(
-            f"Please generate an essay from the main ideas of the following text:\n"
+            f"Please generate a business proposal from the main ideas of the following text:\n"
             f"{text}"
         ),
         temperature=0.5,
