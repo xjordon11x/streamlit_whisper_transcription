@@ -12,7 +12,7 @@ from audio_recorder_streamlit import audio_recorder
 working_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(working_dir)
 
-audio_file = open(audio_file_path, "rb")
+audio_file = audio_file.read()
 
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
