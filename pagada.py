@@ -22,26 +22,26 @@ def summarize(text):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=(
-            f"Please summarize the following text:\n"
+            f"Please generate an email from the following text:\n"
             f"{text}"
         ),
         temperature=0.5,
-        max_tokens=160,
+        max_tokens=250,
     )
 
     return response.choices[0].text.strip()
 
-st.title("Whisper Transcription and Summarization")
+st.title("Whisper Transcription and Email Generation")
 
 
-st.sidebar.title("Whisper Transcription and Summarization")
+st.sidebar.title("Whisper Transcription and Email Generation")
 
 # Explanation of the app
 st.sidebar.markdown("""
         This is an app that allows you to transcribe audio files using the OpenAI API. 
         You can either record audio using the 'Record Audio' tab, or upload an audio file 
         using the 'Upload Audio' tab. Once you have recorded or uploaded an audio file, 
-        click the 'Transcribe' button to transcribe the audio and generate a summary of the 
+        click the 'Transcribe' button to transcribe the audio and generate an email out of the 
         transcript. The transcript and summary can be downloaded using the 'Download Transcript'
         and 'Download Summary' buttons respectively. 
         """)
@@ -93,19 +93,19 @@ if st.button("Transcribe"):
     # summarize
     summary = summarize(text)
 
-    st.header("Summary")
+    st.header("Email")
     st.write(summary)
 
     # save transcript and summary to text files
     with open("transcript.txt", "w") as f:
         f.write(text)
 
-    with open("summary.txt", "w") as f:
+    with open("email.txt", "w") as f:
         f.write(summary)
 
     # download transcript and summary
     st.download_button('Download Transcript', text)
-    st.download_button('Download Summary', summary)
+    st.download_button('Download Email', summary)
 
 # delete audio and text files when leaving app
 if not st.session_state.get('cleaned_up'):
