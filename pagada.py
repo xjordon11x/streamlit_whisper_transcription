@@ -20,7 +20,7 @@ def transcribe(audio_file):
 
 def summarize(text):
     response = openai.Completion.create(
-        engine="text-davinci-003",
+        engine="text-curie-001",
         prompt=(
             f"Please generate an email from the following text:\n"
             f"{text}"
