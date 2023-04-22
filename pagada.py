@@ -31,14 +31,14 @@ st.sidebar.markdown("""
 
 # tab record audio and upload audio
 
-    audio_bytes = audio_recorder(pause_threshold=180)
-    if audio_bytes:
-        st.audio(audio_bytes, format="audio/wav")
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+audio_bytes = audio_recorder(pause_threshold=180)
+if audio_bytes:
+    st.audio(audio_bytes, format="audio/wav")
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        # save audio file to mp3
-        with open(f"audio_{timestamp}.mp3", "wb") as f:
-            f.write(audio_bytes)
+    # save audio file to mp3
+    with open(f"audio_{timestamp}.mp3", "wb") as f:
+        f.write(audio_bytes)
 
 
 if st.button("Transcribe"):
