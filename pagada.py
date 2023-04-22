@@ -3,6 +3,7 @@ import sys
 import datetime
 import openai
 import streamlit as st
+import papeclip
 
 from audio_recorder_streamlit import audio_recorder
 
