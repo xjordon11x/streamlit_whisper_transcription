@@ -1,9 +1,10 @@
+import paperclip
 import os
 import sys
 import datetime
 import openai
 import streamlit as st
-import paperclip
+
 
 from audio_recorder_streamlit import audio_recorder
 
@@ -12,23 +13,6 @@ sys.path.append(working_dir)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-def transcribe(audio_file):
-    transcript = openai.Audio.transcribe("whisper-1", audio_file)
-    return transcript
-
-
-def summarize(text):
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=(
-            f"Please summaize the following text:\n"
-            f"{text}"
-        ),
-        temperature=0.5,
-        max_tokens=560,
-    )
-
-    return response.choices[0].text.strip()
 
 def generate_mail(text):
     response = openai.Completion.create(
@@ -48,15 +32,6 @@ st.title("Whisper Transcription and Summarization")
 
 st.sidebar.title("Whisper Transcription and Summarization")
 
-# Explanation of the app
-st.sidebar.markdown("""
-        This is an app that allows you to transcribe audio files using the OpenAI API. 
-        You can either record audio using the 'Record Audio' tab, or upload an audio file 
-        using the 'Upload Audio' tab. Once you have recorded or uploaded an audio file, 
-        click the 'Transcribe' button to transcribe the audio and generate a summary of the 
-        transcript. The transcript and summary can be downloaded using the 'Download Transcript'
-        and 'Download Summary' buttons respectively. 
-        """)
 
 # tab record audio and upload audio
 tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
@@ -99,22 +74,6 @@ if st.button("Transcribe"):
     transcript = transcribe(audio_file)
     text = transcript["text"]
 
-    st.header("Transcript")
-    st.write(text)
-
-    # summarize
-    summary = summarize(text)
-
-    st.header("Summary")
-    st.write(summary)
-
-    # save transcript and summary to text files
-    with open("transcript.txt", "w") as f:
-        f.write(text)
-
-    with open("summary.txt", "w") as f:
-        f.write(summary)
-
     # generate email
     email = generate_mail(text)
 
@@ -124,10 +83,6 @@ if st.button("Transcribe"):
     # copy email to clipboard
     pyperclip.copy(email)
 
-    # download transcript, summary and email
-    st.download_button('Download Transcript', text)
-    st.download_button('Download Summary', summary)
-    st.download_button('Download Email', email)
     
     # delete audio and text files when leaving app
     if not st.session_state.get('cleaned_up'):
