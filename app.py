@@ -1,5 +1,3 @@
-# paid
-
 import os
 import sys
 import datetime
@@ -12,19 +10,12 @@ from audio_recorder_streamlit import audio_recorder
 working_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(working_dir)
 
-audio_file = audio_file.read()
-
-
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 def transcribe(audio_file):
     transcript = openai.Audio.transcribe("whisper-2", audio_file)
     return transcript
-
-
-
-
 
 
 def summarize(text):
@@ -39,6 +30,7 @@ def summarize(text):
     )
 
     return response.choices[0].text.strip()
+
 
 st.text("Whisper Transcription and Summarization")
 
@@ -80,24 +72,24 @@ with tab2:
 
 if st.button("Transcribe"):
     # check if audio file exists
-    if not any(f.startswith("audio") for f in os.listdir(".")):
+    audio_files = [f for f in os.listdir(".") if f.startswith("audio")]
+    if not audio_files:
         st.warning("Please record or upload an audio file first.")
     else:
         # find newest audio file
         audio_file_path = max(
-            [f for f in os.listdir(".") if f.startswith("audio")],
+            audio_files,
             key=os.path.getctime,
-    )
-        
+        )
 
-    # transcribe
-    audio_file = open(audio_file_path, "rb")
+        # transcribe
+        audio_file = open(audio_file_path, "rb")
+        transcript = transcribe(audio_file)
+        text = transcript["text"]
 
-    transcript = transcribe(audio_file)
-    text = transcript["text"]
+        st.header("Transcript")
+        st.write(text)
 
-    st.header("Transcript")
-    st.write(text)
 
     # summarize
     summary = summarize(text)
