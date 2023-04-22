@@ -20,7 +20,7 @@ def summarize(text):
     response = openai.Completion.create(
         engine="text-curie-001",
         prompt=(
-            f"Please summarize the following text:\n"
+            f"Please summarize the following text in the input language:\n"
             f"{text}"
         ),
         temperature=0.5,
