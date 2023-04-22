@@ -25,16 +25,16 @@ def summarize(text):
         }
     ]
 
-response = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
-    messages=messages,
-    max_tokens=300,
-    n=1,
-    stop=None,
-    temperature=0.5,
-)
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=messages,
+        max_tokens=300,
+        n=1,
+        stop=None,
+        temperature=0.5,
+    )
 
-return response.choices[0].text.strip()
+    return response.choices[0].text.strip()
 
 st.title("Whisper Transcription and Summarization")
 
