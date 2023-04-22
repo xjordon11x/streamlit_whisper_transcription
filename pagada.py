@@ -114,12 +114,22 @@ if st.button("Transcribe"):
     with open("summary.txt", "w") as f:
         f.write(summary)
 
-    # download transcript and summary
+    # generate email
+    email = generate_mail(text)
+
+    st.header("Email")
+    st.write(email)
+
+    # copy email to clipboard
+    pyperclip.copy(email)
+
+    # download transcript, summary and email
     st.download_button('Download Transcript', text)
     st.download_button('Download Summary', summary)
-
-# delete audio and text files when leaving app
-if not st.session_state.get('cleaned_up'):
+    st.download_button('Download Email', email)
+    
+    # delete audio and text files when leaving app
+    if not st.session_state.get('cleaned_up'):
     files = [f for f in os.listdir(".") if f.startswith("audio") or f.endswith(".txt")]
     for file in files:
         os.remove(file)
