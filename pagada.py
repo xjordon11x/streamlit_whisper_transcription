@@ -34,7 +34,7 @@ response = openai.ChatCompletion.create(
     temperature=0.5,
 )
 
-    return response.choices[0].text.strip()
+return response.choices[0].text.strip()
 
 st.title("Whisper Transcription and Summarization")
 
