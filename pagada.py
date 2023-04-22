@@ -18,9 +18,9 @@ def transcribe(audio_file):
 
 def summarize(text):
     response = openai.Completion.create(
-        engine="text-curie-001",
+        engine="text-davinci-003",
         prompt=(
-            f"Please summarize the following text; do not translate:\n"
+            f"Please correct the grammar of the following text:\n"
             f"{text}"
         ),
         temperature=0.5,
