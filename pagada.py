@@ -26,13 +26,12 @@ def summarize(text):
             f"{text}"
         ),
         temperature=0.5,
-        max_tokens=260,
+        max_tokens=160,
     )
 
     return response.choices[0].text.strip()
 
-
-st.text("Whisper Transcription and Summarization")
+st.title("Whisper Transcription and Summarization")
 
 
 st.sidebar.title("Whisper Transcription and Summarization")
@@ -72,24 +71,24 @@ with tab2:
 
 if st.button("Transcribe"):
     # check if audio file exists
-    audio_files = [f for f in os.listdir(".") if f.startswith("audio")]
-    if not audio_files:
+    if not any(f.startswith("audio") for f in os.listdir(".")):
         st.warning("Please record or upload an audio file first.")
     else:
         # find newest audio file
         audio_file_path = max(
-            audio_files,
+            [f for f in os.listdir(".") if f.startswith("audio")],
             key=os.path.getctime,
-        )
+    )
+        
 
-        # transcribe
-        audio_file = audio_file.read()
-        transcript = transcribe(audio_file)
-        text = transcript["text"]
+    # transcribe
+    audio_file = open(audio_file_path, "rb")
 
-        st.header("Transcript")
-        st.write(text)
+    transcript = transcribe(audio_file)
+    text = transcript["text"]
 
+    st.header("Transcript")
+    st.write(text)
 
     # summarize
     summary = summarize(text)
