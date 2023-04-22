@@ -14,7 +14,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 def transcribe(audio_file):
-    transcript = openai.Audio.transcribe("whisper-2", audio_file)
+    transcript = openai.Audio.transcribe("whisper-1", audio_file)
     return transcript
 
 
@@ -26,7 +26,7 @@ def summarize(text):
             f"{text}"
         ),
         temperature=0.5,
-        max_tokens=160,
+        max_tokens=260,
     )
 
     return response.choices[0].text.strip()
@@ -83,7 +83,7 @@ if st.button("Transcribe"):
         )
 
         # transcribe
-        audio_file = open(audio_file_path, "rb")
+        audio_file = audio_file.read()
         transcript = transcribe(audio_file)
         text = transcript["text"]
 
