@@ -41,33 +41,6 @@ if audio_bytes:
         f.write(audio_bytes)
 
 
-if st.button("Transcribe"):
-    # check if audio file exists
-    audio_files = [f for f in os.listdir(".") if f.startswith("audio")]
-    if not audio_files:
-        st.warning("Please record or upload an audio file first.")
-    else:
-        # find newest audio file
-        audio_file_path = max(
-            audio_files,
-            key=os.path.getctime,
-        )
-
-        # transcribe
-        audio_file = audio_file.read()
-        transcript = transcribe(audio_file)
-        text = transcript["text"]
-
-        st.header("Transcript")
-        st.write(text)
-
-
-    # save transcript and summary to text files
-    with open("transcript.txt", "w") as f:
-        f.write(text)
-
-
-
 
 def generate_mail(text):
     response = openai.Completion.create(
