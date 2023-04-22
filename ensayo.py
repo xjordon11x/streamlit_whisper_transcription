@@ -26,23 +26,24 @@ def summarize(text):
             f"{text}"
         ),
         temperature=0.5,
-        max_tokens=2160,
+        max_tokens=3160,
     )
 
     return response.choices[0].text.strip()
-st.title("Whisper Transcription and Email Generation")
+st.write("Whisper Transcription and Essay Generation")
 
 
-st.sidebar.title("Whisper Transcription and Email Generation")
+st.sidebar.title("Whisper Transcription and Essay Generation")
 
 # Explanation of the app
 st.sidebar.markdown("""
-        This is an app that allows you to transcribe audio files using the OpenAI API. 
-        You can either record audio using the 'Record Audio' tab, or upload an audio file 
-        using the 'Upload Audio' tab. Once you have recorded or uploaded an audio file, 
-        click the 'Transcribe' button to transcribe the audio and generate an email out of the 
-        transcript. The transcript and summary can be downloaded using the 'Download Transcript'
-        and 'Download Summary' buttons respectively. 
+## Instructions
+1. Choose to record audio or upload an audio file.
+2. If recording audio, speak clearly and enunciate your words. When finished, stop the recording.
+3. If uploading an audio file, select the file from your device and upload it.
+4. Wait for the audio to be transcribed into text.
+5. Download the generated essay in text format.
+. By Moris Polanco
         """)
 
 # tab record audio and upload audio
@@ -92,19 +93,19 @@ if st.button("Transcribe"):
     # summarize
     summary = summarize(text)
 
-    st.header("Email")
+    st.header("Essay")
     st.write(summary)
 
     # save transcript and summary to text files
     with open("transcript.txt", "w") as f:
         f.write(text)
 
-    with open("email.txt", "w") as f:
+    with open("essay.txt", "w") as f:
         f.write(summary)
 
     # download transcript and summary
     st.download_button('Download Transcript', text)
-    st.download_button('Download Email', summary)
+    st.download_button('Download Essay', summary)
 
 # delete audio and text files when leaving app
 if not st.session_state.get('cleaned_up'):
