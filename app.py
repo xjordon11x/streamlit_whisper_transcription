@@ -5,6 +5,8 @@ import sys
 import datetime
 import openai
 import streamlit as st
+from pydub import AudioSegment
+
 
 from audio_recorder_streamlit import audio_recorder
 
