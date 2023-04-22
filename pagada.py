@@ -90,7 +90,7 @@ with st.form("transcribe_audio_form"):
         st.header("Email")
         st.write(email)
 
-        st.button("Copy Email", to_copy=email)
+        st.button("Copy Email", on_click=lambda: st.experimental_set_query_params(copy=email))
 
 # delete audio file when leaving app
 if not st.session_state.get('cleaned_up'):
