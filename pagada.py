@@ -130,7 +130,7 @@ if st.button("Transcribe"):
     
     # delete audio and text files when leaving app
     if not st.session_state.get('cleaned_up'):
-    files = [f for f in os.listdir(".") if f.startswith("audio") or f.endswith(".txt")]
-    for file in files:
-        os.remove(file)
-    st.session_state['cleaned_up'] = True
+        files = [f for f in os.listdir(".") if f.startswith("audio") or f.endswith(".txt")]
+        for file in files:
+            os.remove(file)
+        st.session_state['cleaned_up'] = True
