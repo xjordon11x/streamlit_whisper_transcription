@@ -17,21 +17,14 @@ def transcribe(audio_file):
 
 
 def summarize(text):
-
-    messages = [
-        {
-            "role": "user",
-            "content": f'Please summarize the following text: "{text}"'
-        }
-    ]
-
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=messages,
-        max_tokens=300,
-        n=1,
-        stop=None,
+    response = openai.Completion.create(
+        engine="text-curie-001",
+        prompt=(
+            f"Please summarize the following text:\n"
+            f"{text}"
+        ),
         temperature=0.5,
+        max_tokens=560,
     )
 
     return response.choices[0].text.strip()
