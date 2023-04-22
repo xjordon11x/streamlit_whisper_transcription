@@ -18,12 +18,12 @@ def transcribe(audio_file):
 
 def summarize(text):
 
-messages = [
-    {
-        "role": "user",
-        "content": f'Please summarize the following text: "{text}"'
-    }
-]
+    messages = [
+        {
+            "role": "user",
+            "content": f'Please summarize the following text: "{text}"'
+        }
+    ]
 
 response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
