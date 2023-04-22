@@ -20,7 +20,7 @@ def summarize(text):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=(
-            f"Please correct the grammar of the following text:\n"
+            f"Please summaize the following text:\n"
             f"{text}"
         ),
         temperature=0.5,
