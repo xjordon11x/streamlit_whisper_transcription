@@ -13,10 +13,9 @@ sys.path.append(working_dir)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-audio_file=audio_file.rename(audio_file.with_suffix('.wav'))
 
 def transcribe(audio_file):
-    transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    transcript = openai.Audio.transcribe("whisper-2", audio_file)
     return transcript
 
 
