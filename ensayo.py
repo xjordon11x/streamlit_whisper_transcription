@@ -22,7 +22,7 @@ def summarize(text):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=(
-            f"Please generate an essay from the following text:\n"
+            f"Please generate a love letter from the following text:\n"
             f"{text}"
         ),
         temperature=0.5,
@@ -30,10 +30,10 @@ def summarize(text):
     )
 
     return response.choices[0].text.strip()
-st.write("Whisper Transcription and Essay Generation")
+st.write("Love Letter Generator")
 
 
-st.sidebar.title("Whisper Transcription and Essay Generation")
+st.sidebar.title("Love Letter Generator")
 
 # Explanation of the app
 st.sidebar.markdown("""
@@ -42,8 +42,8 @@ st.sidebar.markdown("""
 2. If recording audio, speak clearly and enunciate your words. When finished, stop the recording.
 3. If uploading an audio file, select the file from your device and upload it.
 4. Wait for the audio to be transcribed into text.
-5. Download the generated essay in text format.
-. By Moris Polanco
+5. Download the generated letter in text format.
+-  By Moris Polanco
         """)
 
 # tab record audio and upload audio
@@ -93,19 +93,18 @@ if st.button("Transcribe"):
     # summarize
     summary = summarize(text)
 
-    st.header("Essay")
+    st.header("Love Letter")
     st.write(summary)
 
     # save transcript and summary to text files
     with open("transcript.txt", "w") as f:
         f.write(text)
 
-    with open("essay.txt", "w") as f:
+    with open("letter.txt", "w") as f:
         f.write(summary)
 
     # download transcript and summary
-    st.download_button('Download Transcript', text)
-    st.download_button('Download Essay', summary)
+    st.download_button('Download Letter', summary)
 
 # delete audio and text files when leaving app
 if not st.session_state.get('cleaned_up'):
