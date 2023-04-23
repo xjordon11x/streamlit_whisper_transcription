@@ -22,7 +22,7 @@ def summarize(text):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=(
-            f"Please generate a love letter from the following text:\n"
+            f"Please do what you are told from the following text:\n"
             f"{text}"
         ),
         temperature=0.5,
