@@ -72,7 +72,8 @@ with tab2:
         # save audio file with correct extension
         with open(f"audio_{timestamp}.{audio_file.type.split('/')[1]}", "wb") as f:
             f.write(audio_file.read())
-
+            
+            
 if st.button("Transcribe"):
     # check if audio file exists
     if not any(f.startswith("audio") for f in os.listdir(".")):
@@ -82,40 +83,36 @@ if st.button("Transcribe"):
         audio_file_path = max(
             [f for f in os.listdir(".") if f.startswith("audio")],
             key=os.path.getctime,
-    )
-        
-    if audio_file_path:
-            audio_file_path = os.path.abspath(audio_file_path) # get absolute path of audio file
+        )
 
-            # transcribe
-            audio_file = open(audio_file_path, "rb")
+        # transcribe
+        audio_file = open(audio_file_path, "rb")
 
-            transcript = transcribe(audio_file)
-            text = transcript["text"]
+        transcript = transcribe(audio_file)
+        text = transcript["text"]
 
-            st.header("Transcript")
-            st.write(text)
-        
-    
-    # summarize
-    summary = summarize(text)
+        st.header("Transcript")
+        st.write(text)
 
-    st.header("Document")
-    st.write(summary)
+        # summarize
+        summary = summarize(text)
 
-    # save transcript and summary to text files
-    with open("transcript.txt", "w") as f:
-        f.write(text)
+        st.header("Document")
+        st.write(summary)
 
-    with open("document.txt", "w") as f:
-        f.write(summary)
+        # save transcript and summary to text files
+        with open("transcript.txt", "w") as f:
+            f.write(text)
 
-    # download transcript and summary
-    st.download_button('Download Document', summary)
+        with open("document.txt", "w") as f:
+            f.write(summary)
 
-# delete audio and text files when leaving app
-if not st.session_state.get('cleaned_up'):
-    files = [f for f in os.listdir(".") if f.startswith("audio") or f.endswith(".txt")]
-    for file in files:
-        os.remove(file)
-    st.session_state['cleaned_up'] = True
+        # download transcript and summary
+        st.download_button('Download Document', summary)
+
+        # delete audio and text files when leaving app
+        if not st.session_state.get('cleaned_up'):
+            files = [f for f in os.listdir(".") if f.startswith("audio") or f.endswith(".txt")]
+            for file in files:
+                os.remove(file)
+            st.session_state['cleaned_up'] = True
