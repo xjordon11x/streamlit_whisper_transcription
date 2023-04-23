@@ -30,7 +30,7 @@ def summarize(text):
     )
 
     return response.choices[0].text.strip()
-st.image("https://asesorialinguistica.online/wp-content/uploads/2023/04/Secretary-GPT.jpg")
+st.image("https://asesorialinguistica.online/wp-content/uploads/2023/04/Secretary-GPT-1.png")
 
 
 st.sidebar.title("Secretary GPT")
