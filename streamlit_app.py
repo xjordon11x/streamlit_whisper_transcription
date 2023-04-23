@@ -29,28 +29,33 @@ def summarize(text):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=(
-            f"Please summarize the following text:\n"
+            f"Please do what you are asked to do with the following text:\n"
             f"{text}"
         ),
         temperature=0.5,
-        max_tokens=160,
+        max_tokens=560,
     )
 
     return response.choices[0].text.strip()
 
-st.title("Whisper Transcription and Summarization")
+st.image("https://asesorialinguistica.online/wp-content/uploads/2023/04/Secretary-GPT.png")
 
+st.write("Click on the microphone and tell your GPT secretary what to type.")
+st.write("Ex.: 'Write an email to Mary asking for the financial report.'")
 
-st.sidebar.title("Whisper Transcription and Summarization")
+st.sidebar.title("Secretary GPT")
 
 # Explanation of the app
 st.sidebar.markdown("""
-        This is an app that allows you to transcribe audio files using the OpenAI API. 
-        You can either record audio using the 'Record Audio' tab, or upload an audio file 
-        using the 'Upload Audio' tab. Once you have recorded or uploaded an audio file, 
-        click the 'Transcribe' button to transcribe the audio and generate a summary of the 
-        transcript. The transcript and summary can be downloaded using the 'Download Transcript'
-        and 'Download Summary' buttons respectively. 
+## Instructions
+1. Choose to record audio or upload an audio file.
+2. To get started, tell your secretary what to write down
+3. If recording audio, speak clearly and enunciate your words. When finished, stop the recording.
+4. If uploading an audio file, select the file from your device and upload it.
+5. Wait for the audio to be transcribed into text.
+6. Wait for the secretary to write the requested document.
+7. Download the generated document in text format.
+-  By Moris Polanco
         """)
 
 # tab record audio and upload audio
@@ -100,7 +105,7 @@ if st.button("Transcribe"):
     # summarize
     summary = summarize(text)
 
-    st.header("Summary")
+    st.header("Document")
     st.write(summary)
 
     # save transcript and summary to text files
@@ -111,8 +116,7 @@ if st.button("Transcribe"):
         f.write(summary)
 
     # download transcript and summary
-    st.download_button('Download Transcript', text)
-    st.download_button('Download Summary', summary)
+    st.download_button('Download Document', summary)
 
 # delete audio and text files when leaving app
 if not st.session_state.get('cleaned_up'):
