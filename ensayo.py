@@ -30,19 +30,21 @@ def summarize(text):
     )
 
     return response.choices[0].text.strip()
-st.write("Love Letter Generator")
+st.image("https://asesorialinguistica.online/wp-content/uploads/2023/04/Secretary-GPT.jpg")
 
 
-st.sidebar.title("Love Letter Generator")
+st.sidebar.title("Secretary GPT")
 
 # Explanation of the app
 st.sidebar.markdown("""
 ## Instructions
 1. Choose to record audio or upload an audio file.
-2. If recording audio, speak clearly and enunciate your words. When finished, stop the recording.
-3. If uploading an audio file, select the file from your device and upload it.
-4. Wait for the audio to be transcribed into text.
-5. Download the generated letter in text format.
+2. To get started, tell your secretary what to write down
+3. If recording audio, speak clearly and enunciate your words. When finished, stop the recording.
+4. If uploading an audio file, select the file from your device and upload it.
+5. Wait for the audio to be transcribed into text.
+6. Wait for the secretary to write the requested document.
+7. Download the generated document in text format.
 -  By Moris Polanco
         """)
 
@@ -93,18 +95,18 @@ if st.button("Transcribe"):
     # summarize
     summary = summarize(text)
 
-    st.header("Love Letter")
+    st.header("Document")
     st.write(summary)
 
     # save transcript and summary to text files
     with open("transcript.txt", "w") as f:
         f.write(text)
 
-    with open("letter.txt", "w") as f:
+    with open("document.txt", "w") as f:
         f.write(summary)
 
     # download transcript and summary
-    st.download_button('Download Letter', summary)
+    st.download_button('Download Document', summary)
 
 # delete audio and text files when leaving app
 if not st.session_state.get('cleaned_up'):
