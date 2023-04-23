@@ -26,6 +26,7 @@ def transcribe(audio_file):
     return transcript
 
 
+
 def summarize(text):
     response = openai.Completion.create(
         engine="text-davinci-003",
