@@ -99,13 +99,13 @@ if st.button("Transcribe"):
     transcript = transcribe(audio_file)
     text = transcript["text"]
 
-    st.header("Transcript")
+    st.subheader("Transcript")
     st.write(text)
 
     # summarize
     summary = summarize(text)
 
-    st.header("Document")
+    st.subheader("Document")
     st.write(summary)
 
     # save transcript and summary to text files
