@@ -93,13 +93,13 @@ if st.button("Transcribe"):
     )
         
 
-    
     # transcribe
     audio_file = open(audio_file_path, "rb")
 
     transcript = transcribe(audio_file)
     text = transcript["text"]
 
+        
     st.header("Transcript")
     st.write(text)
 
