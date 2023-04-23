@@ -93,8 +93,10 @@ if st.button("Transcribe"):
     )
         
 
+    
     # transcribe
     audio_file = open(audio_file_path, "rb")
+
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     
     text = transcript["text"]
