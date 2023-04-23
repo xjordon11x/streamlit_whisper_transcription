@@ -81,7 +81,7 @@ if st.button("Transcribe"):
         
 
     # transcribe
-    audio_file = open(audio_file_path, "rb")
+    audio_file = open(audio_file_path)
 
     transcript = transcribe(audio_file)
     text = transcript["text"]
