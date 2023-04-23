@@ -84,17 +84,19 @@ if st.button("Transcribe"):
             key=os.path.getctime,
     )
         
+    if audio_file_path:
+            audio_file_path = os.path.abspath(audio_file_path) # get absolute path of audio file
 
-    # transcribe
-    audio_file_path = os.path.abspath(audio_file_path) # get absolute path of audio file
+            # transcribe
+            audio_file = open(audio_file_path, "rb")
 
+            transcript = transcribe(audio_file)
+            text = transcript["text"]
 
-    transcript = transcribe(audio_file)
-    text = transcript["text"]
-
-    st.header("Transcript")
-    st.write(text)
-
+            st.header("Transcript")
+            st.write(text)
+        
+    
     # summarize
     summary = summarize(text)
 
