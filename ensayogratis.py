@@ -19,7 +19,8 @@ else:
     openai.api_key = api_key
     # Continuar con el resto del código que utiliza la clave de API
 
-
+    
+    
 def transcribe(audio_file):
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     return transcript
@@ -93,8 +94,10 @@ if st.button("Transcribe"):
         
 
     # transcribe
-    audio_file = open(audio_file_path, "rb")
-
+    audio_file = open(audio_file_path, "rb") as audio_file:
+           transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    
+        
     transcript = transcribe(audio_file)
     text = transcript["text"]
 
