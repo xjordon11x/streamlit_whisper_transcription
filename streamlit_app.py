@@ -48,6 +48,7 @@ st.sidebar.title("Secretary GPT")
 # Explanation of the app
 st.sidebar.markdown("""
 ## Instructions
+0. Make sure your browser allows microphone access to this site.
 1. Choose to record audio or upload an audio file.
 2. To get started, tell your secretary what to write down
 3. If recording audio, speak clearly and enunciate your words. When finished, stop the recording.
