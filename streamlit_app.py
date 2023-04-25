@@ -33,7 +33,7 @@ def summarize(text):
             f"{text}"
         ),
         temperature=0.5,
-        max_tokens=560,
+        max_tokens=2060,
     )
 
     return response.choices[0].text.strip()
