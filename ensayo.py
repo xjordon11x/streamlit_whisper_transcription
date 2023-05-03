@@ -43,11 +43,11 @@ st.sidebar.markdown("""
 ## Instructions
 0. Make sure your browser allows microphone access to this site.
 1. Choose to record audio or upload an audio file.
-2. To get started, tell your secretary what to write down
-3. If recording audio, speak clearly and enunciate your words. When finished, stop the recording.
-4. If uploading an audio file, select the file from your device and upload it.
-5. Wait for the audio to be transcribed into text.
-6. Wait for the secretary to write the requested document.
+2. To begin, tell your secretary what to record: an email, a report, an article, an essay, etc.
+3. If you record audio, click on the microphone icon to start and to finish.
+4. If you are uploading an audio file, select the file from your device and upload it.
+5. Click on Transcribe. The waiting time is proportional to the recording time.
+6. The transcription appears first and then the request.
 7. Download the generated document in text format.
 -  By Moris Polanco
         """)
