@@ -4,19 +4,14 @@ import datetime
 import openai
 import streamlit as st
 
-
 from audio_recorder_streamlit import audio_recorder
 
 working_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(working_dir)
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-
 def transcribe(audio_file):
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     return transcript
-
 
 def summarize(text):
     response = openai.Completion.create(
@@ -31,10 +26,16 @@ def summarize(text):
 
     return response.choices[0].text.strip()
 
+# Add a text input widget for the user to enter their API key in the Streamlit app's sidebar
+openai_api_key = st.sidebar.text_input("Enter your OpenAI API key", type="password")
+
+# Set up the OpenAI API using the user-provided API key
+if openai_api_key:
+    openai.api_key = openai_api_key
+
 st.image("https://asesorialinguistica.online/wp-content/uploads/2023/04/Secretary-GPT.png")
 
 st.text("Click on the microphone and tell your GPT secretary what to type.")
-
 
 st.sidebar.title("Secretary GPT")
 
@@ -53,7 +54,7 @@ st.sidebar.markdown("""
         """)
 
 # tab record audio and upload audio
-tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
+tab1, tab2 = st.beta_columns(2)
 
 with tab1:
     audio_bytes = audio_recorder(pause_threshold=300)
@@ -84,33 +85,32 @@ if st.button("Transcribe"):
         audio_file_path = max(
             [f for f in os.listdir(".") if f.startswith("audio")],
             key=os.path.getctime,
-    )
+        )
         
+        # transcribe
+        audio_file = open(audio_file_path, "rb")
 
-    # transcribe
-    audio_file = open(audio_file_path, "rb")
+        transcript = transcribe(audio_file)
+        text = transcript["text"]
 
-    transcript = transcribe(audio_file)
-    text = transcript["text"]
+        st.subheader("Transcript")
+        st.write(text)
 
-    st.subheader("Transcript")
-    st.write(text)
+        # summarize
+        summary = summarize(text)
 
-    # summarize
-    summary = summarize(text)
+        st.subheader("Document")
+        st.write(summary)
 
-    st.subheader("Document")
-    st.write(summary)
+        # save transcript and summary to text files
+        with open("transcript.txt", "w") as f:
+            f.write(text)
 
-    # save transcript and summary to text files
-    with open("transcript.txt", "w") as f:
-        f.write(text)
+        with open("summary.txt", "w") as f:
+            f.write(summary)
 
-    with open("summary.txt", "w") as f:
-        f.write(summary)
-
-    # download transcript and summary
-    st.download_button('Download Document', summary)
+        # download transcript and summary
+        st.download_button('Download Document', summary)
 
 # delete audio and text files when leaving app
 if not st.session_state.get('cleaned_up'):
