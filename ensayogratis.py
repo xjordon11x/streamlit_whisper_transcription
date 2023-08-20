@@ -48,13 +48,15 @@ st.sidebar.title("Secretary GPT")
 # Explanation of the app
 st.sidebar.markdown("""
 ## Instructions
-1. Choose to record audio or upload an audio file.
-2. To get started, tell your secretary what to write down
-3. If recording audio, speak clearly and enunciate your words. When finished, stop the recording.
-4. If uploading an audio file, select the file from your device and upload it.
-5. Wait for the audio to be transcribed into text.
-6. Wait for the secretary to write the requested document.
-7. Download the generated document in text format.
+1. Make sure your browser allows microphone access to this site.
+2. Enter your Openai api key
+3. Choose to record audio or upload an audio file.
+4. To begin, tell your secretary what to record: an email, a report, an article, an essay, etc.
+5. If you record audio, click on the microphone icon to start and to finish.
+6. If you are uploading an audio file, select the file from your device and upload it.
+7. Click on Transcribe. The waiting time is proportional to the recording time.
+8. The transcription appears first and then the request.
+9. Download the generated document in text format.
 -  By Moris Polanco
         """)
 
@@ -62,7 +64,7 @@ st.sidebar.markdown("""
 tab1, tab2 = st.tabs(["Record Audio", "Upload Audio"])
 
 with tab1:
-    audio_bytes = audio_recorder(pause_threshold=180)
+    audio_bytes = audio_recorder(pause_threshold=300)
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
