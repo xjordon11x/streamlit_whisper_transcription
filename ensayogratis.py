@@ -10,6 +10,9 @@ working_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(working_dir)
 
 
+st.sidebar.title("Secretary GPT")
+
+
 # Configurar la clave de la API de OpenAI
 api_key = st.sidebar.text_input("Enter your OpenAI API key", type="password")
 
@@ -42,8 +45,6 @@ st.image("https://hablemosbien.org/wp-content/uploads/2023/08/bot-e1692659787339
 
 st.write("Click on the microphone and tell your GPT secretary what to type.")
 st.write("Ex.: 'Write an email to Mary asking for the financial report.'")
-
-st.sidebar.title("Secretary GPT")
 
 # Explanation of the app
 st.sidebar.markdown("""
