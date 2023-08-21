@@ -50,7 +50,7 @@ st.sidebar.markdown("""
 ## Instructions
 1. Enter your OpenAI api key.
 2. Make sure your browser allows microphone access to this site.
-3. Choose to record audio or upload an audio file, in any major language..
+3. Choose to record audio or upload an audio file, in any major language.
 4. To begin, tell your secretary what to record: an email, a report, an article, an essay, etc.
 5. If you record audio, click on the microphone icon to start and to finish.
 6. If you are uploading an audio file, select the file from your device and upload it.
