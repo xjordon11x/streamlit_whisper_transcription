@@ -48,7 +48,7 @@ st.sidebar.title("Secretary GPT")
 # Explanation of the app
 st.sidebar.markdown("""
 ## Instructions
-1. Enter your Openai api key.
+1. Enter your OpenAI api key.
 2. Make sure your browser allows microphone access to this site.
 3. Choose to record audio or upload an audio file, in any major language..
 4. To begin, tell your secretary what to record: an email, a report, an article, an essay, etc.
